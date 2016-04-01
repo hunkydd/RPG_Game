@@ -12,10 +12,11 @@ class GameObject {
 
  public:
   GameObject(int x, int y, Cell *location);
+  ~GameObject();
 
   int x() const;  // getters
   int y() const;
-  *Cell getLocation();
+  *Cell location();
 
   void x(int);  // setters
   void y(int);
@@ -23,7 +24,6 @@ class GameObject {
 
   // Called after every turn
   virtual void tick() = 0;
-  virtual void setDisplay() = 0;
 };
 
 #endif

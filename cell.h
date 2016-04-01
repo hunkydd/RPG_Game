@@ -17,9 +17,9 @@ class Cell {
   int x() const;
   int y() const;
   char display() const;
-  *GameObject getContents();
 
-  void changeContents(GameObject *contents);
+  void changeContents(GameObject *contents, char display);
+  *GameObject getContents();
 };
 
 #endif

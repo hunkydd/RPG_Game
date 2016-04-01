@@ -36,10 +36,6 @@ string Player::getType() {
 			return "Samurai";
 	}
 }
-int Player::health() { return _health; }
-int Player::maxHealth() { return _maxHealth; }
-int Player::attack() { return _attack; }
-int Player::defense() { return _defense; }
 int Player::gold() { return _gold; }
 
 void Player::move( string dir, **Cell grid ) {		// should return a GameObject
@@ -62,22 +58,27 @@ void Player::move( string dir, **Cell grid ) {		// should return a GameObject
 		case "se":
 			row++; col++; break;
 	}
-	if ( !grid[row][col]->getContents()->canWalk() ) {
-		throw ( "There is something in the way" );
+	if ( grid[row][col]->display() != '.' ) {
+		throw ( "You can't move in that direction." );
+	}else if ( grid[row][col]->display() == '$' ) {
+
+	}else {
+		delete grid[row][col].getContents();
+		grid[row][col].changeContents(*this, '@');
+		location(grid[x()][y()]);
+		Unoccupied _unoccupied = new Unoccupied(x(), y(), true, true);
+		grid[x()][y()].changeContents(_unoccupied, '.');
+		x(row);
+		y(col);
 	}
-	Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
-	grid[x()][y()].changeContents(_unoccupied);
-	x(row);
-	y(col);
-	grid[x()][y()].changeContents(this);
 }
 void Player::attack( string dir, **Cell grid ) {
 	int row = x(), col = y();
-	if (job == 1) {			// wizard
+	if (_job == 1) {			// wizard
 		switch ( dir ) {
 			case "nw":
-				for (;grid[row][col]->getContents()->;row--, col--) {
-
+				while ((c != '|') || (c != '>')) {
+					if (grid[--row][--col].display() == 
 				}
 				break;
 			case "no":
@@ -116,26 +117,27 @@ void Player::attack( string dir, **Cell grid ) {
 				row++; col++; break;
 		}
 	}
-	if ( grid[row][col]->canWalk() ) {
-		throw( "There is nothing there!" );
+	char c = grid[row][col]->display();
+	if ( (c == '.') || (c == '|') || (c == '+') || (c == '#') || (c == '>') ) {
+		throw( "There is nothing there to attack!" );
 	}
 	int ceiling = getLocation()->getDefense() == 0 ? 0 : 1;
-	int dmg = -(atk * (100 - getLocation()->getDefense()) / 100 + ceiling);
+	int dmg = -(_attack * (100 - getLocation()->getDefense()) / 100 + ceiling);
 	grid[row][col]->getContents()->setHealth(dmg);
-	// char _type = grid[row][col].getContents().getType();
-	// if ( _class == 's' ) {
-	// 	extern int MAX_COLS, MAX_ROWS;
-	// 	for (int i = 0; i <= MAX_ROWS; i++) {
-	// 		for (int j = 0; j <= MAX_COLS; j++) {
-	// 			if (grid[i][j].getContents().getType() == _type) {
-	// 				grid[i][j].getContents().becomeHostile();
-	// 			}
-	// 		}
-	// 	}
-	// }
 }
 void Player::setHealth( int h ) {
 	if ( _health() + h > _maxHealth() ) { _health = _maxHealth; }
 	else if ( _health() + h < 0 ) { _health = 0; }
 	else { _health += h; }
 }
+void Player::setAttack( int a ) {
+	if ( _attack() + h > 100 ) { _attack = 100; }
+	else if ( _attack() + h < 0 ) { _attack = 0; }
+	else { _attack += h; }
+}
+void Player::setDefense( int d ) {
+	if ( _defense() + h > 100 ) { _defense = 100; }
+	else if ( _defense() + h < 0 ) { _defense = 0; }
+	else { _defense += h; }
+}
+void Player::setGold( int g ) { _gold += g; }
