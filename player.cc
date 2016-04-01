@@ -66,10 +66,10 @@ void Player::move( string dir, **Cell grid ) {		// should return a GameObject
 		throw ( "There is something in the way" );
 	}
 	Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
-	grid[x()][y()].changeContents(_unoccupied);
+	grid[x()][y()].changeContents(_unoccupied, '.');
 	x(row);
 	y(col);
-	grid[x()][y()].changeContents(this);
+	grid[x()][y()].changeContents(this, '@');
 }
 void Player::attack( string dir, **Cell grid ) {
 	int row = x(), col = y();

@@ -12,6 +12,7 @@ class GameObject {
 
  public:
   GameObject(int x, int y, Cell *location);
+  ~GameObject();
 
   int x() const;  // getters
   int y() const;

@@ -13,7 +13,6 @@ class Enemy : public Character {
 	
  public:
 	Enemy( int i );
-	~Enemy();
 
 	char getType();
 	int getAttack();
