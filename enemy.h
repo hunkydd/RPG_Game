@@ -7,16 +7,15 @@ using std::string;
 
 class Enemy : public Character {
 	int _type;
+	char _display;
 	// 0 - Grid Bug, 1 - Goblin, 2 - Merchant, 3 - Orc, 4 - Dragon
-	bool _hostile, _canWalk = false, _dead = false;
-	Item drop;
+	bool _canWalk = false, _dead = false, _canMove;
 	
  public:
-	Enemy( int i );
+ 	bool _hostile;
+	Enemy( char c );
 
 	char getType();
-	int getAttack();
-	int getDefense();
 	bool isHostile();
 	bool canWalk();
 	bool dead();
