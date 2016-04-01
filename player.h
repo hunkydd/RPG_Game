@@ -1,38 +1,30 @@
-#ifndef __PLAYER_H__
-#define __PLAYER_H__
+#ifndef PLAYER_H
+#define PLAYER_H
 #include <string>
-#include "combat.h"
+#include "character.h"
 
 using std::string;
 
-class Player : public Combat {
-	int job;		// 0 - Knight, 1 - Wizard, 2 - Samurai
-	int HP, maxHP, atk, def, gold;
-	struct Location {
-		int row, col, flr;
-	}loc;
+class Player : public Character {
+	int _job;			// 0 - Knight, 1 - Wizard, 2 - Samurai
+	int _floor;		// if (flr == 5) && (player enters the stair) game = win;
+	int _gold;
 
  public:
-	Player( string choice );
+	Player( char _class );
 	~Player();
 
-	int getCurrentHP();
-	int getMaxHP();
-	int getAtk();
-	int getDef();
-	int getGold();
-	string getClass();
-	Location getLocation();
+	string getType();
+	int health();
+	int naxHealth();
+	int attack();
+	int defense();
+	int gold();
+	*Cell location();
 
-	void changeHP( int h );
-	void gainPotion( Potion p );
-	// void endPotion( Potion p );
-	void gainGold( int g );
-	void move( string dir );
-	void attack( string dir );
-
-	void notify();
-	bool isWon();
+	void move( string dir, Cell **grid );
+	void attack( string dir, Cell **grid );
+	void setHealth( int h );
 };
 
 #endif

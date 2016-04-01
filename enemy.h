@@ -1,29 +1,32 @@
 #ifndef __ENEMY_H__
 #define __ENEMY_H__
 #include <string>
-#include "combat.h"
+#include "character.h"
 
 using std::string;
 
-class Enemy : public Combat {
-	char type;				// X - Grid Bug, g - Goblin, M - Merchant
-										// O - Orc, D - Dragon
-	int HP, maxHP, atk, def;
-	bool hostile;
-	struct Location {
-		int row, col;
-	}loc;
-	// Item drop;		// ...
-
+class Enemy : public Character {
+	int _type;
+	// 0 - Grid Bug, 1 - Goblin, 2 - Merchant, 3 - Orc, 4 - Dragon
+	bool _hostile, _canWalk = false, _dead = false;
+	Item drop;
+	
+ public:
 	Enemy( int i );
 	~Enemy();
 
-	char Enemy::getType();
-	Location getLocation();
+	char getType();
+	int getAttack();
+	int getDefense();
+	bool isHostile();
+	bool canWalk();
+	bool dead();
+
 	void move();
+	void becomeHostile();
 	void attack( &Player p );
-	void changeHP( int h );
+	void changeHealth( int h );
 	void gainPotion();
-	Item dropItem();
+	void die();
 };
 #endif
