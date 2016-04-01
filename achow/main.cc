@@ -15,6 +15,7 @@ using namespace std;
 
 int main (int argc, char *argv[]) {
 	bool d = true;
+	char c;
 	ifstream file; 
 
 
@@ -29,7 +30,8 @@ int main (int argc, char *argv[]) {
 
 	if (d) file.open("defaultmap.txt");
 
-	Game *game = new Game (file, d);
+	cin >> c;
+	Game *game = new Game (file, d, c);
 
 	game.display();
 	

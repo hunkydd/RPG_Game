@@ -5,7 +5,7 @@ Item::Item(int x, int y, int item) : GameObject(x,y), item(item){} //For read in
 
 Item::Item(int item) : item(item){} //For random generation
 
-void Item::itemEffect(Player *player) {
+void Item::itemEffect(Character *character) {
 	switch (item) {
 		case 0:
 			break;
@@ -30,4 +30,16 @@ void Item::itemEffect(Player *player) {
 
 void Item::item() { return item; }
 bool Item::canSpawn() { return false; }
-bool Item::canWalk() { return true; }
+bool Item::canWalk() { return false; }
+bool Item::canPickup() { return true; }
+//bool Item::canAttack() { return true; }
+
+DragonGold::DragonGold(int x, int y, int item) : Item(x,y,item){}
+
+DragonGold::DragonGold(int item) : item(item){}
+
+void DragonGold::addDragon(Enemy *dr) { dragon = dr; }
+
+bool DragonGold::canPickup() {
+	return dragon->dead(); 
+}

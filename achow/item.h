@@ -6,6 +6,8 @@
 
 class Item : public GameObject {
     int item;
+
+    //bool gold;
     /*
     *0-RH
     *1-BA
@@ -26,6 +28,8 @@ class Item : public GameObject {
     	void tick(); // dunno
     	bool canWalk();
     	bool canSpawn();
+        //bool canAttack();
+        bool canPickup();
 };
 
 /*
@@ -34,11 +38,14 @@ class Potion : public Item {
 		Potion(int x, int y, int item);
 		int itemEffect();
 };
-
-class Gold : public Item {
-	public:
-		Gold(int x, int y, int item);
-		int itemEffect();
+*/
+class DragonGold : public Item {
+	Enemy *dragon;
+    public:
+		DragonGold(int x, int y, int item);
+        DragonGold(int item);
+        void addDragon(Enemy *dr);
+		bool canPickup();
 };
-*/ //Tests
+
 #endif
