@@ -1,9 +1,11 @@
 #include <iostream>
 #include "item.h"
 
-Item::Item(int x, int y, int item) : GameObject(x,y), item(item){}
+Item::Item(int x, int y, int item) : GameObject(x,y), item(item){} //For read in generation
 
-int Item::itemEffect() {
+Item::Item(int item) : item(item){} //For random generation
+
+void Item::itemEffect(Player *player) {
 	switch (item) {
 		case 0:
 			break;
@@ -22,5 +24,10 @@ int Item::itemEffect() {
 		case 7:
 			break;
 	}
+	Unoccupied *tile = new Unoccupied(x,y,true,true);
+	_location->changeContents(tile,'.');
 }
-bool Item::occupied() { return true; }
+
+void Item::item() { return item; }
+bool Item::canSpawn() { return false; }
+bool Item::canWalk() { return true; }

@@ -7,11 +7,11 @@ GameObject::GameObject(int x,int y) : x(x), y(y) {
 	_location=cell;
 	*/
 }
-/*
+
 GameObject::~GameObject() {
 	delete _location
 }
-*/
+
 int GameObject::x() const {
 	return _x;
 }
@@ -24,4 +24,8 @@ void GameObject::x(int x) {
 }  // setters
 void GameObject::y(int y) {
 	_y = y;
+}
+
+void GameObject::setLocation(Cell *location) {
+	_location=location;
 }

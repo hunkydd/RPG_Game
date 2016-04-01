@@ -2,6 +2,7 @@
 #define ITEM_H
 
 #include "gameobject.h"
+#include "player.h"
 
 class Item : public GameObject {
     int item;
@@ -17,9 +18,14 @@ class Item : public GameObject {
     */
     public:
     	Item(int x, int y, int item);
-    	int itemEffect();  
-    	void tick();
-    	bool occupied();
+    	Item(int item);
+
+    	int item();
+
+    	void itemEffect(Player *player);  
+    	void tick(); // dunno
+    	bool canWalk();
+    	bool canSpawn();
 };
 
 /*
@@ -34,5 +40,5 @@ class Gold : public Item {
 		Gold(int x, int y, int item);
 		int itemEffect();
 };
-*/
+*/ //Tests
 #endif

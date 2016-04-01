@@ -18,7 +18,7 @@ class Cell {
         char display() const;
 
         void changeContents(GameObject *contents);
-        * GameObject getContents();
+        *GameObject getContents();
 
 };
 

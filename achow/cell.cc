@@ -12,7 +12,8 @@ int Cell::x() const { return _x; }
 int Cell::y() const { return _y; }
 char Cell::display() const { return _display; }
 
-void Cell::changeContents(GameObject *contents){
+void Cell::changeContents(GameObject *contents, char c){
+	_display=c;
 	_contents = contents;
 }
 

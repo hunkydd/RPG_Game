@@ -6,7 +6,7 @@ class Cell;
 
 // add public/private/protected members as necessary
 class GameObject {
-    //Cell * _location;
+    Cell * _location;
     int _x,_y
     public:
         GameObject(int x, int y);
@@ -16,10 +16,11 @@ class GameObject {
 
         void x(int x);  // setters
         void y(int y);
-
+        void location(Cell *location);
         // Called after every turn
         virtual void tick() = 0;
-        virtual bool occupied() = 0;      
+        virtual bool canWalk() = 0; //was occupied
+        virtual bool canSpawn() = 0;     
 };
 
 #endif
