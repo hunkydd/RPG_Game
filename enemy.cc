@@ -3,16 +3,20 @@
 #include "game.h"
 #include <string>
 
+using std::string;
+
 Enemy::Enemy( char c )
 	: _hostile( true ), _display( c ) {
 	if ( c == 'X' ) {							// Grid Bug
 		_type = 0;
+		_name = "Grid Bug";
 		_health = _maxHealth = 50;
 		_attack = 20;
 		_defense = 10;
 		drop = new Item (x(), y(), prng(6));
 	}else if ( c == 'g' ) {				// Goblin
 		_type = 1;
+		_name = "Goblin";
 		_health = _maxHealth = 75;
 		_attack = 30;
 		_defense = 20;
@@ -20,6 +24,7 @@ Enemy::Enemy( char c )
 		drop = new Item (x(), y(), 6)
 	}else if ( c == 'M' ) {				// Merchant
 		_type = 2;
+		_name = "Merchant";
 		_health = _maxHealth = 100;
 		_attack = 75;
 		_defense = 5;
@@ -28,12 +33,14 @@ Enemy::Enemy( char c )
 		drop = new Item (x(), y(), 6)
 	}else if ( c == 'O' ) {					// Orc
 		_type = 3;
+		_name = "Orc";
 		_health = _maxHealth = 120;
 		_attack = 30;
 		_defense = 30;
 		drop = new Item (x(), y(), 6)
 	}	else {												// Dragon
 		_type = 4;
+		_name = "Dragon";
 		_health = _maxHealth = 150;
 		_attack = 50;
 		_defense = 10;
@@ -41,6 +48,7 @@ Enemy::Enemy( char c )
 }
 
 char Enemy::getType() { return _type; }
+string Enemy::getName() { return _name; }
 bool Enemy::isHostile() { return _hostile; }
 bool Enemy::canWalk() { return _canWalk; }
 
@@ -49,7 +57,7 @@ void Enemy::move( **Cell grid ) {
 	int row = x(), col = y();
 	int space = 0;
 	for (int i = 0; i < 9; i++) {
-		if (grid[x()+(i%3-1)][y()+(i/3-1)].display()) space++;
+		if ( grid[x()+(i%3-1)][y()+(i/3-1)].display() ) space++;
 	}
 	while ( !grid[getLocation()->x()][getLocation()->y()].display() != '.' ) {
 		if (space == 0) break;
@@ -93,6 +101,17 @@ void Enemy::attack() {
 		grid[x][y]->setHealth(dmg);
 	}
 }
+
+void Enemy::setAttack( int a ) {
+	if ( _attack() + a > 100 ) { _attack = 100; }
+	else if ( _attack() + a < 0 ) { _attack = 0; }
+	else { _attack += a; }
+}
+void Enemy::setDefense( int d ) {
+	if ( _defense() + d > 100 ) { _defense = 100; }
+	else if ( _defense() + d < 0 ) { _defense = 0; }
+	else { _defense += d; }
+}
 // changes the enemy's HP when attacked by the player
 // or when goblin drinks a potion
 void Enemy::setHealth( int h ) {
@@ -101,6 +120,7 @@ void Enemy::setHealth( int h ) {
 	else _maxHealth += h;
 }
 void Enemy::die() {
+	cout << "The " << _name << " has died." << endl;
 	if ( _type == 0 ) {							// Grid Bug
 		Item _item = new Item (x(), y(), prng(6));
 		getLocation()->changeContents(_item);
