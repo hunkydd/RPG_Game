@@ -19,6 +19,7 @@ class Player : public Character {
 
 	void move( string dir, Cell **grid );
 	void attack( string dir, Cell **grid );
+	void use( string dir, Cell **grid );
 	void setHealth( int h );
 	void setAttack( int a );
 	void setDefense( int d );

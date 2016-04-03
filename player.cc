@@ -64,29 +64,7 @@ void Player::move( string dir, **Cell grid ) {		// should return a GameObject
 	if (grid[row][col]->display() == '>') {
 		// move up
 	}else if ( grid[row][col]->display() == '$' ) {
-		// grid[row][col]->itemEffect(*this);
-		switch ( grid[row][col]->getContents()->item() ) {
-			case 6:
-				setGold(10);
-				cout << "You pick up the Gold Pile worth 10GP." << endl;
-				delete grid[row][col].getContents();
-				grid[row][col].changeContents(_unoccupied, '.');
-				break;
-			case 7:
-				bool dragonSlain = true;
-				for (int i = 0; i < 8; i++) {
-					if ( grid[row+(i%3-1)][col+(i/3-1)]->display() == 'D') dragonSlain = false;
-				}
-				if ( dragonSlain ) {
-					setGold(50);
-					cout << "You successfully take the Dragon Hoard!" << endl;
-					delete grid[row][col].getContents();
-					grid[row][col].changeContents(_unoccupied, '.');
-				}else {
-					cout << "It would be foolhardy to take the dragon's gold right now." << endl;
-				}
-			}
-		}
+		grid[row][col]->itemEffect(*this);
 	}else if ( (grid[row][col]->display() == ' ') ||
 			  		 (grid[row][col]->display() == '-') ||
 			  		 (grid[row][col]->display() == '|') ) {
@@ -178,6 +156,33 @@ void Player::attack( string dir, **Cell grid ) {
 	cout << "You attack the " << grid[row][col]->getContents()->getName();
 	cout << "with your " << skill << " for " << -dmg << " damage!" << endl;
 }
+void Player::use( string dir, Cell **grid ) {
+	int row = x(), col = y();
+	switch ( dir ) {
+		case "nw":
+			row--; col--; break;
+		case "no":
+			row--; break;
+		case "ne":
+			row--; col++; break;
+		case "wo":
+			col--; break;
+		case "eo":
+			col++; break;
+		case "sw":
+			row++; col--; break;
+		case "so":
+			row++; break;
+		case "se":
+			row++; col++; break;
+	}
+	if ( (grid[row][col]->display() == '$') || (grid[row][col]->display() == '!') ) {
+		grid[row][col]->itemEffect(this);
+	}else {
+		throw ( "There is nothing there to use!" );
+	}
+}
+
 void Player::setHealth( int h ) {
 	if ( _health() + h > _maxHealth() ) { _health = _maxHealth; }
 	else if ( _health() + h < 0 ) { _health = 0; }

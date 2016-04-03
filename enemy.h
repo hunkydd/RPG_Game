@@ -25,7 +25,9 @@ class Enemy : public Character {
 	void move();
 	void becomeHostile();
 	void attack( &Player p );
-	void changeHealth( int h );
+	void setAttack( int a );
+	void setDefense( int d );
+	void setHealth( int h );
 	void gainPotion();
 	void die();
 };
