@@ -16,6 +16,7 @@ class Character : public GameObject {
   virtual void tick();    // override from GameObject
   virtual void move();
   virtual void attack();
+  virtual void use();
   virtual void setHealth( int h );
   virtual void setAttack( int a );
   virtual void setDefense( int d );

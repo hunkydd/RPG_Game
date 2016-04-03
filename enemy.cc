@@ -73,16 +73,6 @@ void Enemy::move( **Cell grid ) {
 	x(row);
 	y(col);
 }
-// for Merchants, and Enemies while playing Samurai
-void Enemy::becomeHostile(**Cell grid) {
-	for (int i = 0; i <= MAX_ROWS; i++) {
-		for (int j = 0; j <= MAX_COLS; j++) {
-			if ( grid[i][j].display() == _display ) {
-				grid[i][j].getContents->_hostile = true;
-			}
-		}
-	}
-}
 // calculates the damage done by the enemy
 // and changes the player's HP
 void Enemy::attack() {
@@ -99,6 +89,27 @@ void Enemy::attack() {
 		int ceiling = ( grid[x][y]->getDefense() == 0 ? 0 : 1 );
 		int dmg = -(_attack * (100 - grid[x][y]->getDefense()) / 100 + ceiling);
 		grid[x][y]->setHealth(dmg);
+	}
+}
+void Enemy::use() {
+	bool _potionNearby = false;
+	for (int i = 0; i < 9; i++) {
+		if (grid[x()+(i%3-1)][y()+(i/3-1)].display() == '!') {
+			x = x() + (i % 3 - 1);
+			y = y() + (i / 3 - 1);
+			_potionNearby = true;
+		}
+	}
+	if ( (_type == 'g') && _potionNearby ) grid[x][y]->itemEffect(*this);
+}
+// for Merchants, and Enemies while playing Samurai
+void Enemy::becomeHostile(**Cell grid) {
+	for (int i = 0; i <= MAX_ROWS; i++) {
+		for (int j = 0; j <= MAX_COLS; j++) {
+			if ( grid[i][j].display() == _display ) {
+				grid[i][j].getContents->_hostile = true;
+			}
+		}
 	}
 }
 

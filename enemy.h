@@ -7,8 +7,8 @@ using std::string;
 
 class Enemy : public Character {
 	int _type;
-	string _name;
 	// 0 - Grid Bug, 1 - Goblin, 2 - Merchant, 3 - Orc, 4 - Dragon
+	string _name;
 	char _display;
 	bool _canWalk = false, _dead = false, _canMove;
 	
@@ -23,8 +23,9 @@ class Enemy : public Character {
 	bool dead();
 
 	void move();
-	void becomeHostile();
 	void attack( &Player p );
+	void use();
+	void becomeHostile();
 	void setAttack( int a );
 	void setDefense( int d );
 	void setHealth( int h );
