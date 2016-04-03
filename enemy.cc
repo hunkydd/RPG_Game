@@ -51,13 +51,24 @@ char Enemy::getType() { return _type; }
 string Enemy::getName() { return _name; }
 bool Enemy::isHostile() { return _hostile; }
 bool Enemy::canWalk() { return _canWalk; }
+bool Enemy::dead() { return ( health == 0 ); }
+int Enemy::detect( **Cell grid ) {
+	int _nearby = 0; 				// 0 if nothing, 1 if potion, 2 if player
+	for (int i = 0; i < 9; i++) {
+		if ( grid[x()+(i%3-1)][y()+(i/3-1)]->display() == '!' ) _nearby = 1;
+	}
+	for (int i = 0; i < 9; i++) {
+		if ( grid[x()+(i%3-1)][y()+(i/3-1)]->display() == '@' ) _nearby = 2;
+	}
+	return _nearby;
+}
 
 // Moves enemies in random direction
 void Enemy::move( **Cell grid ) {
 	int row = x(), col = y();
 	int space = 0;
 	for (int i = 0; i < 9; i++) {
-		if ( grid[x()+(i%3-1)][y()+(i/3-1)].display() ) space++;
+		if ( grid[x()+(i%3-1)][y()+(i/3-1)]->display() == '.' ) space++;
 	}
 	while ( !grid[getLocation()->x()][getLocation()->y()].display() != '.' ) {
 		if (space == 0) break;

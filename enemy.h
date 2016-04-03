@@ -21,6 +21,7 @@ class Enemy : public Character {
 	bool isHostile();
 	bool canWalk();
 	bool dead();
+	int detect( **Cell grid );
 
 	void move();
 	void attack( &Player p );
