@@ -11,6 +11,7 @@ using std::cout;
 using std::endl;
 using std::list;
 using std::string;
+using std::for_each;
 
 //Sets seed of prng
 void setSeed( uint32_t seed ) {
@@ -33,6 +34,8 @@ Game::Game (fstream &file, bool d, char c) : floor(0){
 	Player *player = new Player(c);
 	_player=player;
 
+	playerLoc = new Unoccupied[MAX_FLOORS];
+
 	list<Enemy *> *en = new list<Enemy *>[MAX_FLOORS];
 	enemies = en;
 	if (!d) {
@@ -49,37 +52,41 @@ Game::Game (fstream &file, bool d, char c) : floor(0){
 						if (c == '>') tile->stair();
 						grid[i][y][x].changeContents(tile, c);
 					} else if (c == '@') { //player
-						grid[i][y][x].changeContents(player, c);
+						Unoccupied *tile = new Unoccupied(x,y,true,true);
+						grid[i][y][x].changeContents(tile, c);
+						tile->location(grid[f][y][x]);
+						playerLoc[i] = tile;
 					} else if (c == 'X' || c == 'g' || c == 'M' || c == 'O' || c == 'D') { //enemy 
 						Enemy *e = new Enemy(c);
 						e->x(loc.x);
 						e->y(loc.y);
 						grid[f][loc.y][loc.x].changeContents(gold,c);
-						e->location(grid[f][loc.y][loc.x]);
+						e->location(grid[f][y][x]);
 						enemies[f]->push_back(e);
 					} else if (c == '6') {
 						Item *item = new Item(x,y, c - '0');
 						item->x(loc.x);
 						item->y(loc.y);
 						grid[i][y][x].changeContents(item, '$');
-						item->location(grid[f][loc.y][loc.x]);
+						item->location(grid[f][y][x]);
 					} else if (c == '7') { //gold
 						DragonGold *item = new DragonGold(x,y, c - '0');
 						item->x(loc.x);
 						item->y(loc.y);
 						grid[i][y][x].changeContents(item, '$');
-						item->location(grid[f][loc.y][loc.x]);
+						item->location(grid[f][y][x]);
 					} else if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5') { //potion
 						Item *item = new Item(x,y, c - '0');
 						item->x(loc.x);
 						item->y(loc.y);
 						grid[i][y][x].changeContents(item, '!');
-						item->location(grid[f][loc.y][loc.x]);
+						item->location(grid[f][y][x]);
 					}
 				}
 			}
-			for (int l=0; l < 7; l++) {
-				adjacent()
+			list<Enemy *>::iterator x;
+			for( x = enemies[i].begin(); x != enemies[i].end(); x++) {
+				findHoard(i,x);
 			}
 		}
 	} else {
@@ -110,7 +117,29 @@ Game::Game (fstream &file, bool d, char c) : floor(0){
 			}
 		}
 	}
+	setPlayer(floor);
 
+}
+
+void Game::setPlayer(int f) {
+	player->x(playerLoc[f].x());
+	player->y(playerLoc[f].y());
+	grid[f][player->x()][player->y()].changeContents(player,'@');
+	player->location(grid[f][player->x()][player->y()]);
+}
+
+void Game::findHoard(int f, Enemy *en) {
+	if (en->getType() == 4) {
+		for (int i=0; i < 7; i++) {
+			adjacent(en->x(), en->y(), f, i);
+			if(grid[f]][loc.y][loc.x].display() == '$') {
+				if(grid[f]][loc.y][loc.x].getContents()->item() == 7) {
+					grid[f]][loc.y][loc.x].getContents()->addDragon(en);
+					break;
+				}
+			}
+		}
+	}
 
 }
 
@@ -215,10 +244,10 @@ void Game::spawnStairs(int f) {
 
 void Game::spanwPlayer(int f) {
 	genLocation(f, false);
-	//player.x(loc.x);
-	//player.y(loc.y);
-	grid[f][loc.y][loc.x].changeContents(player,'@');
-	//player.location(grid[f][loc.y][loc.x]);
+	Unoccupied *tile = new Unoccupied(loc.x,loc.y,true,true);
+	grid[f][y][x].changeContents(tile, ' ');
+	tile->location(grid[f][loc.y][loc.x]);
+	playerLoc[f] = tile;
 }
 
 void Game::spawnPotion(int f) {
@@ -269,7 +298,7 @@ void Game::spawnGold(int f) {
 }
 
 
-void spawnEnemy(int f) {
+void Game::spawnEnemy(int f) {
 	int rn = prng (5);
 	char c;
 	if ( rn == 0 || rn == 1 ) {
@@ -293,8 +322,7 @@ void spawnEnemy(int f) {
 
 }
 
-void adjacent(int x, int y, int f, int centre) {
-	
+void Game::adjacent(int x, int y, int f, int centre) {
 	int row=y 
 	int col=x;
 	switch (centre) {
@@ -342,50 +370,149 @@ bool Game::canWalk (int x, int y) {
 	return grid[f][y][x].getContents()->canWalk();
 }
 
-void action (istream &cmd) {
+void Game::action (istream &cmd) {
+	string s;
 	cmd >> s;
-	if (s == "no") {
+	try {
+		if (s == "no") {
+			player->move(s, grid[floor]);
+		} else if (s == "so") {
+			player->move(s, grid[floor]);
+		} else if (s == "ea") {
+			player->move(s, grid[floor]);
+		} else if (s == "we") {
+			player->move(s, grid[floor]);
+		} else if (s == "ne") {
+			player->move(s, grid[floor]);
+		} else if (s == "nw") {
+			player->move(s, grid[floor]);
+		} else if (s == "se") {
+			player->move(s, grid[floor]);
+		} else if (s == "sw") {
+			player->move(s, grid[floor]);
+		} else if (s == "a") {
+			cmd >> s;
+			player->attack(s,grid[floor])
+		} else if (s == "u") {
+			cmd >> s;
+			int row = player->y();
+			int col = player-x();
+			if (s == "no") {
+				row--;
+			} else if (s == "so") {
+				row++;
+			} else if (s == "ea") {
+				col++;
+			} else if (s == "we") {
+				col--;
+			} else if (s == "ne") {
+				row--; 
+				col++;
+			} else if (s == "nw") {
+				row--;
+				col--;
+			} else if (s == "se") {
+				row++;
+				col++
+			} else if (s == "sw") {
+				row++;
+				col--;	
+			}
+			if(grid[floor][row][col].display() == '!') {
+				grid[floor][row][col].getContents()->itemEffect(player);
+			} else {
+				cout << "Unexpected direction for use." << endl;
+			}
+		} else if (s == "q") {
+	 		cout << "Are you sure you want to quit? (y/n)" <<endl;
+	 		cmd >> s;
+	 		if (s != 'y' || s != 'n') {
+	 			cout << "Did not recognize input." <<endl;
+	 		} else {
+		 		if (s == "y") {
+		 			cout << "You have chosen to exit. At least you tried." <<endl;
+		 			done = true;
+		 		} else {
+		 			goto L;
+		 		}	 			
+	 		}
 
-	} else if (s == "so") {
 
-	} else if (s == "ea") {
-
-	} else if (s == "we") {
-
-	} else if (s == "ne") {
-
-	} else if (s == "nw") {
-
-	} else if (s == "se") {
-
-	} else if (s == "sw") {
-
-	} else if (s == "se") {
-
-	} else if (s == "a") {
-
-	} else if (s == "u") {
-
-	} else if (s == "q") {
-
-    } else if (s == "stopwander") {
-
-	} else if (s == "stopdeath") {
-
+	    } else if (s == "stopwander") {
+	    	stopwander = true;
+		} else if (s == "stopdeath") {
+			stopwander = true;
+		} else {
+			cout << "Did not recognize input." <<endl;
+		}
+	} catch ( const string &ex) {
+		cout << ex << endl;
+		action(cmd);
 	}
-	for_each(enemies[floor].begin(), enemies[floor].end(),/*do stuff*/);
+	if (!stopwander) {
+		list<Enemy *>::iterator x;
+		for( x = enemies[i].begin(); x != enemies[i].end(); x++) {
+			if(findPlayer) {
+				x->attack();
+			} else {
+				x->move();
+			}
+		}
+	}
+	if (!stopdeath && player->_health() == 0) gameOver();
+	if (player->advance()) nextFloor(); //advance
+	turn++;
+	L: ;
+}
+
+void Game::findPlayer(int f, Enemy *en) {
+	for (int i=0; i < 7; i++) {
+		adjacent(en->x(), en->y(), f, i);
+		if(grid[f]][loc.y][loc.x].display() == '@') {
+			return true;
+		}
+	}
+	return false;
 
 }
 
-void display() {
+bool Game::win() { return done; }
+bool Game::play() {return playAgain; }
+void Game::nextFloor() {
+	player->advance(false);
+	if (floor  == 6) {
+		cout << "At long last, you have outmatched the Great Cavernous Chambers. Great things await you."<< endl;
+    	cout << "You achieved a score of"<<0<<"."<<endl;
+    	done = true;
+    	playAgain = true;
+	} else {
+		floor++;
+		setPlayer(floor);
+		cout << "You decended down to floor " << floor <<"." << endl;
+	}
+}
+
+
+
+void Game::gameOver() {
+	done = true;
+	playAgain = true;
+	cout << "You have been bested by the Great Cavernous Chambers. Good luck next time!"<< endl;
+    cout << "You achieved a score of"<<0<<"."<<endl;
+
+}
+string Game::type() {
+	return player->getType();
+}
+void Game::display() {
 	for (int y = 0; y < MAX_ROWS; y++) {
 		for (int x = 0; x < MAX_COLS; x++) {
 				cout<<grid[i][y][x].display();
 		}
 	}
 	cout<<endl;
-	cout<<"           Class: " << setw(15) << "Knight" << "GP: " << setw(15) <<"0"<< "Floor" << getfloor() << endl;
-	cout<<"           HP: " << setw(3) << "/100            Atk:" << setw(15) <<"50" <<"          Def:" << setw(15) <<"50"<<"\%" << "          Turn: " << "1" << endl;
+	cout<<"           Class: " << setw(15) << type() << "GP: " << setw(15) <<player->gold()<< "Floor" << floor << endl;
+	cout<<"           HP: " << setw(3) <<player->_Health() << "/100            Atk:" << setw(15) <<player->_Attack() <<"          Def:" << setw(15) <<player->_Defense()<<'%' << "          Turn: " << turn << endl;
 
 	
 }

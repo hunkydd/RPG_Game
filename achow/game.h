@@ -29,17 +29,20 @@ class Game {
 
     Cell ***grid;
     Player *_player;
+    Unoccupied *playerLoc;
     std::list<Enemy *> *enemies;
 
     int floor;
     int playerRoom = -1;
+    int turn=1;
     bool stopDeath = false;
     bool stopWander = false;
-
+    bool done = false;
+    bool playAgain = false;
+    
     struct Location {
     	int x, y;
     } loc;
-
 
     void genLocation(int f);
     void spawnPlayer(int f);
@@ -47,9 +50,12 @@ class Game {
     void spawnPotion(int f);
     void spawnGold(int f);
     void spawnEnemy(int f);
-    void findHoard(int f,)
-    //bool spawnDragon (int x, int y, int f);
-    void adjacent(int x, int y, int f);
+    void findHoard(int f, Enemy *en);
+    void findplayer(int f, Enemy *en);
+    void adjacent(int x, int y, int f, int centre);
+    void setPlayer(int f);
+    bool canSpawn (int x, int y, int f);
+    bool canWalk(int x, int y);
 
     public:
     	Game (fstream &file);
@@ -57,13 +63,15 @@ class Game {
 
     	
 
-    	bool canSpawn (int x, int y, int f);
-    	bool canWalk(int x, int y);
+
     	
     	void actions(std::string s);
     	void display();
-    	//void nextFloor()
-    	//bool win()
+        bool win();
+        bool play();
+    	void nextFloor();
+        void gameOver();
+        std::string type();
 };
 
 #endif
