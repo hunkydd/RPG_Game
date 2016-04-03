@@ -1,6 +1,6 @@
 #ifndef ITEM_H
 #define ITEM_H
-
+#include <iostream>
 #include "gameobject.h"
 #include "player.h"
 
@@ -24,7 +24,7 @@ class Item : public GameObject {
 
     	int item();
 
-    	void itemEffect(Player *player);  
+    	void itemEffect(Character *character);  
     	void tick(); // dunno
     	bool canWalk();
     	bool canSpawn();
