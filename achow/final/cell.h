@@ -9,7 +9,7 @@ class GameObject;
 class Cell {
     int _x, _y;
     char _display;
-    GameObject *_contents;
+    GameObject *_contents = 0;
 
     public:
         Cell(int x, int y, char display);

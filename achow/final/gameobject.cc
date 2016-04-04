@@ -6,9 +6,10 @@ GameObject::GameObject(int x,int y) : _x(x), _y(y) {
 	Cell *cell = new Cell(x,y,c);
 	_location=cell;
 	*/
+	_location = 0;
 }
 
-GameObject::GameObject(){}
+GameObject::GameObject(){ _location = 0;}
 
 GameObject::~GameObject() {
 	delete _location;

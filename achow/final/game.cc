@@ -30,7 +30,15 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 			grid[i][s] = new Cell[MAX_COLS];
 		}
 	}
-	
+	/*
+	for (int i = 0; i < MAX_FLOORS; i++) {
+		for (int y = 0; y < MAX_ROWS; y++) {
+			for (int x = 0; x < MAX_COLS; x++) {
+				grid[i][y][x]=new Cell();
+			} 
+		}
+	}
+	*/
 	player = new Player(-1,-1,p);
 	
 	playerLoc = new Unoccupied[MAX_FLOORS];
@@ -41,7 +49,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 		for (int i = 0; i < MAX_FLOORS; i++) {
 			//cout<<i<<endl;
 			for (int y = 0; y < MAX_ROWS; y++) {
-				for (int x = 0; x < MAX_COLS; x++) {
+				for (int x = 0; x < MAX_COLS-1; x++) {
 					file.get(c);
 					Cell *cell = new Cell (x,y,c);
 					grid [i][y][x] = *cell;
@@ -110,6 +118,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 		}
 		for (int i = 0; i < MAX_FLOORS; i++) {
 			//display();
+			//cout<<i<<endl;
 			spawnPlayer(i);
 			spawnStairs(i);
 			for (int z = 0; z < 10; z++) {
@@ -159,7 +168,7 @@ Game::~Game() {
 		delete [] grid [i];
 	}
 	delete [] grid;
-	delete [] playerLoc;
+	//delete [] playerLoc;
 	//delete player maybe
 }
 
@@ -375,7 +384,7 @@ void Game::adjacent(int x, int y, int f, int centre) {
 //Checks to see if you can spawn on tile
 bool Game::canSpawn (int x, int y, int f) {
 	//cout<<y<<" "<<x<<endl;
-	//cout<<grid[f][y][x].display()<<endl;
+	//cout<<grid[f][y][x]->display()<<endl;
 	return grid[f][y][x].getContents()->canSpawn();
 }
 
@@ -505,7 +514,7 @@ void Game::display() {
 		//cout<<endl;
 	}
 	cout<<endl;
-	cout<<"           Class: " << setw(15) << type() << "GP: " << setw(15) <<player->gold()<< "Floor" << floor << endl;
-	cout<<"           HP: " << setw(3) <<player->health() << "/100            Atk:" << setw(15) <<player->att() <<"          Def:" << setw(15) <<player->defence()<<'%' << "          Turn: " << turn << endl;
+	cout<<"           Class: " << setw(8) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor << endl;
+	cout<<"           HP: " << setw(3) <<player->health() << "/" << player->maxHealth() <<"            Atk:" << setw(3) <<player->att() <<"          Def:" << setw(3) <<player->defence()<<'%' << "          Turn: " << turn << endl;
 
 }

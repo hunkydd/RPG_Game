@@ -24,9 +24,9 @@ class Game {
     const int MAX_FLOORS = 5;
     const int MAX_ROWS = 25;
     const int MAX_COLS = 81;
-    const int NUM_POTIONS = 5;
-    const int NUM_GOLD = 7;
-    const int NUM_ENEMIES = 5;
+    //const int NUM_POTIONS = 5;
+    //const int NUM_GOLD = 7;
+    //const int NUM_ENEMIES = 5;
 
     Cell ***grid;
     Player *player;
