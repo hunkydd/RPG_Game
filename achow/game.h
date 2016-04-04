@@ -51,20 +51,16 @@ class Game {
     void spawnGold(int f);
     void spawnEnemy(int f);
     void findHoard(int f, Enemy *en);
-    void findplayer(int f, Enemy *en);
+    //void findplayer(int f, Enemy *en);
     void adjacent(int x, int y, int f, int centre);
     void setPlayer(int f);
     bool canSpawn (int x, int y, int f);
     bool canWalk(int x, int y);
 
     public:
-    	Game (fstream &file);
+    	Game (fstream &file, bool d, char c);
     	~Game();
-
-    	
-
-
-    	
+		
     	void actions(std::string s);
     	void display();
         bool win();

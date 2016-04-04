@@ -154,7 +154,7 @@ Game::~Game() {
 	//delete player maybe
 }
 
-int Game::getfloor() { return floor; }
+//int Game::floor() { return floor; }
 
 void Game::genLocation(int f, bool stairs) {
 	int room;
@@ -395,34 +395,7 @@ void Game::action (istream &cmd) {
 			player->attack(s,grid[floor])
 		} else if (s == "u") {
 			cmd >> s;
-			int row = player->y();
-			int col = player-x();
-			if (s == "no") {
-				row--;
-			} else if (s == "so") {
-				row++;
-			} else if (s == "ea") {
-				col++;
-			} else if (s == "we") {
-				col--;
-			} else if (s == "ne") {
-				row--; 
-				col++;
-			} else if (s == "nw") {
-				row--;
-				col--;
-			} else if (s == "se") {
-				row++;
-				col++
-			} else if (s == "sw") {
-				row++;
-				col--;	
-			}
-			if(grid[floor][row][col].display() == '!') {
-				grid[floor][row][col].getContents()->itemEffect(player);
-			} else {
-				cout << "Unexpected direction for use." << endl;
-			}
+			player->use(s,grid[floor])
 		} else if (s == "q") {
 	 		cout << "Are you sure you want to quit? (y/n)" <<endl;
 	 		cmd >> s;
@@ -436,8 +409,6 @@ void Game::action (istream &cmd) {
 		 			goto L;
 		 		}	 			
 	 		}
-
-
 	    } else if (s == "stopwander") {
 	    	stopwander = true;
 		} else if (s == "stopdeath") {
@@ -452,19 +423,25 @@ void Game::action (istream &cmd) {
 	if (!stopwander) {
 		list<Enemy *>::iterator x;
 		for( x = enemies[i].begin(); x != enemies[i].end(); x++) {
-			if(findPlayer) {
+			int eMove=x->detect(grid[floor]);
+			if(eMove == 2) {
 				x->attack();
+			} else if (eMove == 1) {
+				x->use();
 			} else {
-				x->move();
+				x->move(grid[floor]);
 			}
 		}
 	}
 	if (!stopdeath && player->_health() == 0) gameOver();
-	if (player->advance()) nextFloor(); //advance
-	turn++;
+	if (player->advance()) { // temp
+		nextFloor(); //advance
+	} else {
+		turn++;
+	}
 	L: ;
 }
-
+/*
 void Game::findPlayer(int f, Enemy *en) {
 	for (int i=0; i < 7; i++) {
 		adjacent(en->x(), en->y(), f, i);
@@ -475,7 +452,7 @@ void Game::findPlayer(int f, Enemy *en) {
 	return false;
 
 }
-
+*/
 bool Game::win() { return done; }
 bool Game::play() {return playAgain; }
 void Game::nextFloor() {
