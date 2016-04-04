@@ -8,6 +8,7 @@ using std::string;
 class Player : public Character {
 	int _job;			// 0 - Knight, 1 - Wizard, 2 - Samurai
 	int _gold;
+	bool _stair = false;
 
  public:
 	Player( char _class );
@@ -17,6 +18,7 @@ class Player : public Character {
 	int gold();
 	*Cell location();
 
+	void reset();
 	void move( string dir, Cell **grid );
 	void attack( string dir, Cell **grid );
 	void use( string dir, Cell **grid );

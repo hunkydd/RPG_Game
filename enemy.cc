@@ -54,8 +54,10 @@ bool Enemy::canWalk() { return _canWalk; }
 bool Enemy::dead() { return ( health == 0 ); }
 int Enemy::detect( **Cell grid ) {
 	int _nearby = 0; 				// 0 if nothing, 1 if potion, 2 if player
-	for (int i = 0; i < 9; i++) {
-		if ( grid[x()+(i%3-1)][y()+(i/3-1)]->display() == '!' ) _nearby = 1;
+	if ( grid[x()][y()]->display == 'g' ) {
+		for (int i = 0; i < 9; i++) {
+			if ( grid[x()+(i%3-1)][y()+(i/3-1)]->display() == '!' ) _nearby = 1;
+		}
 	}
 	for (int i = 0; i < 9; i++) {
 		if ( grid[x()+(i%3-1)][y()+(i/3-1)]->display() == '@' ) _nearby = 2;
