@@ -129,6 +129,9 @@ void Player::attack( string dir, **Cell grid ) {
 				}
 				cout << "You attack the " << grid[row][col]->getContents()->getName();
 				cout << "with your Inifinite Loop Laser for " << -dmg << " damage!" << endl;
+				if (grid[row][col]->getContents()->getHealth() == 0) {
+					grid[row][col]->getContents()->die();
+				}
 				break;
 			}else continue;
 		}

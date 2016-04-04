@@ -18,6 +18,7 @@ class Enemy : public Character {
 
 	char getType();
 	string getName();
+	int getHealth();
 	bool isHostile();
 	bool canWalk();
 	bool dead();

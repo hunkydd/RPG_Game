@@ -49,6 +49,7 @@ Enemy::Enemy( char c )
 
 char Enemy::getType() { return _type; }
 string Enemy::getName() { return _name; }
+int Enemy::getHealth() { return _health; }
 bool Enemy::isHostile() { return _hostile; }
 bool Enemy::canWalk() { return _canWalk; }
 bool Enemy::dead() { return ( health == 0 ); }
