@@ -61,8 +61,10 @@ int Enemy::detect( Cell ***grid ) {
 			if ( grid[_x+(i%3-1)][_y+(i/3-1)]->display() == '!' ) _nearby = 1;
 		}
 	}
-	for (int i = 0; i < 9; i++) {
-		if ( grid[_x+(i%3-1)][_y+(i/3-1)]->display() == '@' ) _nearby = 2;
+	if ( _hostile ) {
+		for (int i = 0; i < 9; i++) {
+			if ( grid[_x+(i%3-1)][_y+(i/3-1)]->display() == '@' ) _nearby = 2;
+		}
 	}
 	return _nearby;
 }
@@ -102,11 +104,11 @@ void Enemy::attack(Character *player) {
 		//}
 	}
 	*/
-	//if ( _hostile && _playerNearby ) {
+	if ( _hostile ) {
 		int ceiling = ( player->getDefense() == 0 ? 0 : 1 );
 		int dmg = -(_attack * (100 - player->getDefense()) / 100 + ceiling);
 		player->setHealth(dmg);
-	//}
+	}
 }
 void Enemy::use(Cell ***grid) {
 	bool _potionNearby = false;

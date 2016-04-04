@@ -54,7 +54,7 @@ void Player::reset() {
 	}
 }
 void Player::move( string dir, **Cell grid ) {		// should return a GameObject
-	int row = x(), col = y();
+	int row = y(), col = x();
 	switch ( dir ) {
 		case "nw":
 			row--; col--; break;
@@ -92,7 +92,7 @@ void Player::move( string dir, **Cell grid ) {		// should return a GameObject
 	}
 }
 void Player::attack( string dir, **Cell grid ) {
-	int row = x(), col = y();
+	int row = y(), col = x();
 	if (_job == 1) {			// wizard
 		int door = 0;		// if there are two or more doors(+) on the way, you cannot attack
 		while ( true ) {
