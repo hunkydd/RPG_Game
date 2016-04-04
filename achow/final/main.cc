@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <istream>
+#include <sstream>
 #include <cstdlib>
 #include <ctype.h>
 #include "gameobject.h"
@@ -23,7 +24,9 @@ int main (int argc, char *argv[]) {
 	Game *game;
 
 	for (int i = 1; i < argc; i++) {
-		if (isdigit(atoi(argv[i]))) {
+		int x;
+		std::istringstream iss( argv[i] );
+		if (iss>>x) {
 			setSeed(atoi(argv[i]));
 		} else {
 			file.open(argv[i]);
@@ -66,7 +69,7 @@ int main (int argc, char *argv[]) {
 		 			cout << "Did not recognize input." <<endl;
 		 		} else {
 			 		if (s == "n") {
-			 			goto L;
+			 			goto L1;
 			 		}
 		 		}
 			}			
@@ -78,7 +81,7 @@ int main (int argc, char *argv[]) {
 		delete game;
 
 	}
-	L:;
+	L1:;
 	delete game;
 	file.close();
 }

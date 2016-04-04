@@ -34,7 +34,8 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 	for (int i = 0; i < MAX_FLOORS; i++) {
 		for (int y = 0; y < MAX_ROWS; y++) {
 			for (int x = 0; x < MAX_COLS; x++) {
-				grid[i][y][x]=new Cell();
+				Cell *cell = new Cell();
+				grid[i][y][x]=*cell;
 			} 
 		}
 	}
@@ -286,7 +287,8 @@ void Game::spawnGold(int f) {
 	int x, y;
 	Item *gold;
 	int rn = prng(7);
-	if (rn < 7) {
+	
+	if (rn < 6) {
 		gold = new Item(6);
 		genLocation(f, false);
 		x=loc.x;
@@ -384,7 +386,7 @@ void Game::adjacent(int x, int y, int f, int centre) {
 //Checks to see if you can spawn on tile
 bool Game::canSpawn (int x, int y, int f) {
 	//cout<<y<<" "<<x<<endl;
-	//cout<<grid[f][y][x]->display()<<endl;
+	//cout<<grid[f][y][x].display()<<endl;
 	return grid[f][y][x].getContents()->canSpawn();
 }
 
@@ -514,7 +516,7 @@ void Game::display() {
 		//cout<<endl;
 	}
 	cout<<endl;
-	cout<<"           Class: " << setw(8) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor << endl;
+	cout<<"           Class: " << setw(7) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor << endl;
 	cout<<"           HP: " << setw(3) <<player->health() << "/" << player->maxHealth() <<"            Atk:" << setw(3) <<player->att() <<"          Def:" << setw(3) <<player->defence()<<'%' << "          Turn: " << turn << endl;
 
 }

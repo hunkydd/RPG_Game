@@ -1,10 +1,8 @@
 #include <iostream>
 #include "cell.h"
 
-Cell::Cell (int x, int y, char display) : _x(x), _y(y), _display(display) {
-	_contents=0;
-}
-Cell::Cell(){ _contents=0; }
+Cell::Cell (int x, int y, char display) : _x(x), _y(y), _display(display), _contents(0) {}
+Cell::Cell() :_contents(0) {}
 Cell::~Cell() {
 	delete _contents;
 }
@@ -20,5 +18,6 @@ void Cell::changeContents(GameObject *contents, char display){
 }
 
 GameObject *Cell::getContents() {
+	//_contents=0;
 	return _contents;
 }

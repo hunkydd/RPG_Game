@@ -12,7 +12,7 @@ GameObject::GameObject(int x,int y) : _x(x), _y(y) {
 GameObject::GameObject(){ _location = 0;}
 
 GameObject::~GameObject() {
-	delete _location;
+	//delete _location;
 }
 
 int GameObject::x() const {
