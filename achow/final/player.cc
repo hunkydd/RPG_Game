@@ -59,7 +59,7 @@ void Player::reset() {
 //void Player::tick() {}
 
 void Player::move( string dir, Cell ***grid ) {		// should return a GameObject
-	int row = x(), col = y();
+	int row = y(), col = x();
 	string s=dir;
 	if (s == "no") {
 		row--; 
@@ -88,17 +88,17 @@ void Player::move( string dir, Cell ***grid ) {		// should return a GameObject
 			  		 (grid[row][col]->display() == '|') ) {
 		throw ( "You can't move in that direction." );
 	}else {
-		delete grid[row][col]->getContents();
+		//delete grid[row][col]->getContents();
 		grid[row][col]->changeContents(this, '@');
-		location(grid[x()][y()]);
+		location(grid[row][col]);
 		Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
 		grid[x()][y()]->changeContents(_unoccupied, '.');
-		x(row);
-		y(col);
+		x(col);
+		y(row);
 	}
 }
 void Player::attack( string dir, Cell ***grid ) {
-	int row = x(), col = y();
+	int row = y(), col = x();
 	string s=dir;
 	string skill;
 	if (_job == 1) {			// wizard
@@ -173,7 +173,7 @@ void Player::attack( string dir, Cell ***grid ) {
 	cout << "with your " << skill << " for " << -dmg << " damage!" << endl;
 }
 void Player::use( string dir, Cell ***grid ) {
-	int row = x(), col = y();
+	int row = y(), col = x();
 	string s=dir;
 	if (s == "no") {
 		row--; 

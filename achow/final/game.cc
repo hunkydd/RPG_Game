@@ -39,6 +39,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 	enemies = en;
 	if (!d) {
 		for (int i = 0; i < MAX_FLOORS; i++) {
+			//cout<<i<<endl;
 			for (int y = 0; y < MAX_ROWS; y++) {
 				for (int x = 0; x < MAX_COLS; x++) {
 					file.get(c);
@@ -91,6 +92,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 		}
 	} else {
 		for (int i = 0; i < MAX_FLOORS; i++) {
+			//cout<<i<<endl;
 			for (int y = 0; y < MAX_ROWS; y++) {
 				for (int x = 0; x < MAX_COLS; x++) {
 					file.get(c);
@@ -105,6 +107,8 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 					} 
 				}
 			}
+		}
+		for (int i = 0; i < MAX_FLOORS; i++) {
 			//display();
 			spawnPlayer(i);
 			spawnStairs(i);
@@ -129,8 +133,8 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 void Game::setPlayer(int f) {
 	player->x(playerLoc[f].x());
 	player->y(playerLoc[f].y());
-	grid[f][player->x()][player->y()].changeContents(player,'@');
-	player->location(&grid[f][player->x()][player->y()]);
+	grid[f][player->y()][player->x()].changeContents(player,'@');
+	player->location(&grid[f][player->y()][player->x()]);
 }
 
 void Game::findHoard(int f, Enemy *en) {
@@ -409,12 +413,13 @@ void Game::action (std::istream &cmd) {
 		} else if (s == "q") {
 	 		cout << "Are you sure you want to quit? (y/n)" <<endl;
 	 		cmd >> s;
-	 		if (s != "y" || s != "n") {
+	 		if (s != "y" && s != "n") {
 	 			cout << "Did not recognize input." <<endl;
 	 		} else {
 		 		if (s == "y") {
 		 			cout << "You have chosen to exit. At least you tried." <<endl;
 		 			done = true;
+					goto L;
 		 		} else {
 		 			goto L;
 		 		}	 			
@@ -425,6 +430,7 @@ void Game::action (std::istream &cmd) {
 			stopDeath = true;
 		} else {
 			cout << "Did not recognize input." <<endl;
+			action(cmd);
 		}
 	} catch ( const string &ex) {
 		cout << ex << endl;
