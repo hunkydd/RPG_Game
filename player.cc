@@ -41,6 +41,18 @@ string Player::getType() {
 }
 int Player::gold() { return _gold; }
 
+void Player::reset() {
+	_stair = false;
+	if ( _class == "k" ) {
+		_attack = _defense = 50;
+	}else if ( _class == "w" ) {
+		_attack = 25;
+		_defense = 0;
+	}else if ( _class == "s" ) {
+		_attack = 50;
+		_defense = 15;
+	}
+}
 void Player::move( string dir, **Cell grid ) {		// should return a GameObject
 	int row = x(), col = y();
 	switch ( dir ) {
@@ -62,7 +74,7 @@ void Player::move( string dir, **Cell grid ) {		// should return a GameObject
 			row++; col++; break;
 	}
 	if (grid[row][col]->display() == '>') {
-		// move up
+		_stair = true;
 	}else if ( grid[row][col]->display() == '$' ) {
 		grid[row][col]->itemEffect(*this);
 	}else if ( (grid[row][col]->display() == ' ') ||
