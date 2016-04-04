@@ -11,7 +11,7 @@ class Player : public Character {
 	bool _stair = false;
  public:
 	Player(int x, int y, char _class );
-	~Player();
+	//~Player();
 
 	string getType();
 	int gold();

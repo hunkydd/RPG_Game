@@ -1,7 +1,9 @@
 #include <iostream>
 #include "cell.h"
 
-Cell::Cell (int x, int y, char display) : _x(x), _y(y), _display(display) {}
+Cell::Cell (int x, int y, char display) : _x(x), _y(y), _display(display) {
+	//_content=new Unoccupied(_x,_y,true,true);
+}
 Cell::Cell(){}
 Cell::~Cell() {
 	delete _contents;

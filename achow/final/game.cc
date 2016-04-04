@@ -44,7 +44,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 					file.get(c);
 					Cell *cell = new Cell (x,y,c);
 					grid [i][y][x] = *cell;
-					if (c == '-' || c == '|' || c == ' ') { //unwalkable
+					if (c == '-' || c == '|' || c == ' ' || c == '\n') { //unwalkable
 						Unoccupied *tile = new Unoccupied(x,y,false,false);
 						grid[i][y][x].changeContents(tile, c);
 					} else if (c == '.' || c == '+' || c == '#' || c == '>') { //walkable
@@ -96,7 +96,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 					file.get(c);
 					Cell *cell = new Cell(x,y,c);
 					grid [i][y][x] = *cell;
-					if (c == '-' || c == '|' || c == ' ') {
+					if (c == '-' || c == '|' || c == ' ' || c == '\n') {
 						Unoccupied *tile = new Unoccupied(x,y,false,false);
 						grid[i][y][x].changeContents(tile, c);
 					} else if (c == '.' || c == '+' || c == '#') {
@@ -105,17 +105,21 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 					} 
 				}
 			}
+			//display();
 			spawnPlayer(i);
 			spawnStairs(i);
 			for (int z = 0; z < 10; z++) {
 				spawnPotion(i);
 			}
+			
 			for (int z = 0; z < 10; z++) {
 				spawnGold(i);
 			}
+			
 			for (int z = 0; z < 20; z++) {
 				spawnEnemy(i);
 			}
+			//cout<<i<<endl;
 		}
 	}
 	setPlayer(floor);
@@ -233,6 +237,7 @@ void Game::genLocation(int f, bool stairs) {
 	playerRoom = room; //Changes everytime a player is placed in floor
 	loc.x = x;
 	loc.y = y;
+	//cout<<y<<" "<<x<<endl;
 }
 
 void Game::spawnStairs(int f) {
@@ -281,6 +286,7 @@ void Game::spawnGold(int f) {
 			y=loc.y;
 			int rn = prng(8);
 			adjacent(x,y,f,rn);
+			//cout<<loc.x<<" "<<loc.y<<endl;
 			if(canSpawn(loc.x,loc.y, f)) {
 				Enemy *drag = new Enemy(loc.x,loc.y,'D');
 				drag->x(loc.x);
@@ -289,6 +295,7 @@ void Game::spawnGold(int f) {
 				enemies[f].push_back(drag);
 				gold2->addDragon(drag);
 				gold = gold2;
+				break;
 			}
 		} //for spawning dragon
 	}
@@ -361,9 +368,10 @@ void Game::adjacent(int x, int y, int f, int centre) {
 	loc.y=row;
 }
 
-
 //Checks to see if you can spawn on tile
 bool Game::canSpawn (int x, int y, int f) {
+	//cout<<y<<" "<<x<<endl;
+	//cout<<grid[f][y][x].display()<<endl;
 	return grid[f][y][x].getContents()->canSpawn();
 }
 
@@ -488,6 +496,7 @@ void Game::display() {
 		for (int x = 0; x < MAX_COLS; x++) {
 				cout<<grid[floor][y][x].display();
 		}
+		//cout<<endl;
 	}
 	cout<<endl;
 	cout<<"           Class: " << setw(15) << type() << "GP: " << setw(15) <<player->gold()<< "Floor" << floor << endl;

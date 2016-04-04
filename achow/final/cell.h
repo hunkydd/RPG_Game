@@ -2,7 +2,7 @@
 #define CELL_H
 
 #include "gameobject.h"
-
+//#include "unoccupied.h"
 // forward declaration because mutual reference
 class GameObject;
 

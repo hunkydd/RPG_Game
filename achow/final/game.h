@@ -23,7 +23,7 @@ extern void setSeed( uint32_t seed );
 class Game {
     const int MAX_FLOORS = 5;
     const int MAX_ROWS = 25;
-    const int MAX_COLS = 79;
+    const int MAX_COLS = 81;
     const int NUM_POTIONS = 5;
     const int NUM_GOLD = 7;
     const int NUM_ENEMIES = 5;
@@ -42,7 +42,8 @@ class Game {
     bool playAgain = false;
     
     struct Location {
-    	int x, y;
+    	int x = 0;
+	int y = 0;
     } loc;
 
     void genLocation(int f, bool stairs);
