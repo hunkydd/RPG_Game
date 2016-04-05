@@ -16,7 +16,7 @@ class Enemy : public Character {
 	GameObject *drop;
 
 	const int MAX_ROWS = 25;
-    	const int MAX_COLS = 79;
+    	const int MAX_COLS = 81;
  public:
 	Enemy( int x, int y, char c );
 	void hostile(bool b);

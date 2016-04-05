@@ -134,6 +134,12 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 				spawnEnemy(i);
 			}
 			//cout<<i<<endl;
+			if (p == 's') {
+				list<Enemy *>::iterator x;
+				for ( x = enemies[i].begin(); x != enemies[i].end(); x++) {
+					(*x)->hostile(false);
+				}	
+			}
 		}
 	}
 	setPlayer(floor);
@@ -455,14 +461,17 @@ void Game::action (std::istream &cmd) {
 	if (!stopWander) {
 		list<Enemy *>::iterator x;
 		for( x = enemies[floor].begin(); x != enemies[floor].end(); x++) {
-			if ((*x)->dead()) (*x)->die();
-			int eMove=(*x)->detect(grid[floor]);
-			if(eMove == 2) {
-				(*x)->attack(player);
-			} else if (eMove == 1) {
-				(*x)->use(grid[floor]);
+			if ((*x)->dead()) { 
+				(*x)->die();
 			} else {
-				(*x)->move(grid[floor]);
+				int eMove=(*x)->detect(grid[floor]);
+				if(eMove == 2) {
+					(*x)->attack(player);
+				} else if (eMove == 1) {
+					(*x)->use(grid[floor]);
+				} else {
+					(*x)->move(grid[floor]);
+				}
 			}
 		}
 	}
@@ -523,7 +532,7 @@ void Game::display() {
 		//cout<<endl;
 	}
 	cout<<endl;
-	cout<<"           Class: " << setw(8) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor << endl;
+	cout<<"           Class: " << setw(8) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor+1<< endl;
 	cout<<"           HP: " << setw(3) <<player->health() << "/" << player->maxHealth() <<"            Atk:" << setw(3) <<player->att() <<"          Def:" << setw(3) <<player->defence()<<'%' << "          Turn: " << turn << endl;
 
 }

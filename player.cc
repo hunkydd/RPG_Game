@@ -167,20 +167,21 @@ void Player::attack( string dir, Cell **grid ) {
 		} else if (s == "sw") {
 			row++; col--;
 		} 
+	
+		char c = grid[row][col].display();
+		if ( (c == '.') || (c == '|') || (c == '+') || (c == '#') || (c == '>') || (c == '-') ) {
+			throw std::ios_base::failure( "There is nothing there to attack!" );
+		}
+		int ceiling = grid[row][col].getContents()->getDefense() == 0 ? 0 : 1;
+		int dmg = -(_attack * (100 - grid[row][col].getContents()->getDefense()) / 100 + ceiling);
+		grid[row][col].getContents()->setHealth(dmg);
+		if ( !grid[row][col].getContents()->isHostile() ) {
+			grid[row][col].getContents()->becomeHostile( grid );
+			cout << "This is an act of war to every " << grid[row][col].getContents()->getName() << "!" << endl;
+		}
+		cout << "You attack the " << grid[row][col].getContents()->getName();
+		cout << " with your " << skill << " for " << -dmg << " damage!" << endl;
 	}
-	char c = grid[row][col].display();
-	if ( (c == '.') || (c == '|') || (c == '+') || (c == '#') || (c == '>') || (c == '-') ) {
-		throw std::ios_base::failure( "There is nothing there to attack!" );
-	}
-	int ceiling = grid[row][col].getContents()->getDefense() == 0 ? 0 : 1;
-	int dmg = -(_attack * (100 - grid[row][col].getContents()->getDefense()) / 100 + ceiling);
-	grid[row][col].getContents()->setHealth(dmg);
-	if ( !grid[row][col].getContents()->isHostile() ) {
-		grid[row][col].getContents()->becomeHostile( grid );
-		cout << "This is an act of war to every " << grid[row][col].getContents()->getName() << "!" << endl;
-	}
-	cout << "You attack the " << grid[row][col].getContents()->getName();
-	cout << "with your " << skill << " for " << -dmg << " damage!" << endl;
 }
 void Player::use( string dir, Cell **grid ) {
 	int row = y(), col = x();

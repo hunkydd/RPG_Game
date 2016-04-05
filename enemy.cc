@@ -53,21 +53,25 @@ char Enemy::getType() { return _type; }
 string Enemy::getName() { return _name; }
 bool Enemy::isHostile() { return _hostile; }
 bool Enemy::canWalk() { return _canWalk; }
-bool Enemy::dead() { return ( _health <= 0 ); }
+bool Enemy::dead() { 
+	return ( _health <= 0 ); 
+}
 int Enemy::detect( Cell **grid ) {
 	int _nearby = 0; 				// 0 if nothing, 1 if potion, 2 if player
-	int row = y(), col = x();
-	if ( grid[row][col].display() == 'g' ) {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				if (grid[row+i-1][col+j-1].display() == '!') _nearby = 1;
+	if(!_dead) {
+		int row = y(), col = x();
+		if ( grid[row][col].display() == 'g' ) {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					if (grid[row+i-1][col+j-1].display() == '!') _nearby = 1;
+				}
 			}
 		}
-	}
-	if ( _hostile ) {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				if (grid[row+i-1][col+j-1].display() == '@') _nearby = 2;
+		if ( _hostile ) {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					if (grid[row+i-1][col+j-1].display() == '@') _nearby = 2;
+				}
 			}
 		}
 	}
@@ -78,30 +82,32 @@ int Enemy::detect( Cell **grid ) {
 void Enemy::move( Cell **grid ) {
 	int row = y(), col = x();
 	int space = 0;
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			if ((i == 1) && (j == 1)) continue;
-			if (grid[row+i-1][col+j-1].display() == '.') space++;
+	if (_health > 0) {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if ((i == 1) && (j == 1)) continue;
+				if (grid[row+i-1][col+j-1].display() == '.') space++;
+			}
 		}
-	}
-	if (space != 0) {
-		while ( grid[row][col].display() != '.' ) {
-			int i = prng(2)-1;			// i, j = [-1,1]
-			int j = prng(2)-1;
-			row = y()+i;						// Enemy moves randomly vertically
-			col = x()+j;						// 					``					horizontally
+		if (space != 0) {
+			while ( grid[row][col].display() != '.' ) {
+				int i = prng(2)-1;			// i, j = [-1,1]
+				int j = prng(2)-1;
+				row = y()+i;						// Enemy moves randomly vertically
+				col = x()+j;						// 					``					horizontally
+			}
 		}
-	}
-	if (grid[y()][x()].display() == 'D') {}
-	else {
-		delete grid[row][col].getContents();
-		grid[row][col].changeContents(this, _display);
-		location(&grid[y()][x()]);
-		Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
-		int tmpY = y(), tmpX = x();
-		y(row);
-		x(col);
-		grid[tmpY][tmpX].changeContents(_unoccupied, '.');
+		if (grid[y()][x()].display() == 'D') {}
+		else {
+			delete grid[row][col].getContents();
+			grid[row][col].changeContents(this, _display);
+			location(&grid[row][col]);
+			Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
+			int tmpY = y(), tmpX = x();
+			y(row);
+			x(col);
+			grid[tmpY][tmpX].changeContents(_unoccupied, '.');
+		}
 	}
 }
 // calculates the damage done by the enemy
@@ -115,21 +121,19 @@ void Enemy::attack(Character *player) {
 	}
 }
 void Enemy::use(Cell **grid) {
-	bool _potionNearby = false;
 	int row =y(), col=x();
 	for (int i = 0; i < 9; i++) {
 		if (grid[row][col].display() == '!') {
 			row = y() + (i % 3 - 1);
 			col = x() + (i / 3 - 1);
-			_potionNearby = true;
 		}
 	}
-	if ( (_type == 'g') && _potionNearby ) grid[row][col].getContents()->itemEffect(this, false);
+	if ( _type == 'g' ) grid[row][col].getContents()->itemEffect(this, false);
 }
 // for Merchants, and Enemies while playing Samurai
 void Enemy::becomeHostile(Cell **grid) {
-	for (int i = 0; i <= MAX_ROWS; i++) {
-		for (int j = 0; j <= MAX_COLS; j++) {
+	for (int i = 0; i < MAX_ROWS; i++) {
+		for (int j = 0; j < MAX_COLS; j++) {
 			if ( grid[i][j].display() == _display ) {
 				grid[i][j].getContents()->hostile(true);
 			}
@@ -160,22 +164,25 @@ void Enemy::setHealth( int h ) {
 	else _maxHealth += h;
 }
 void Enemy::die() {
-	cout << "The " << _name << " has died." << endl;
-	if ( _type == 0 ) {							// Grid Bug
-		//Item *_item = new Item (x(), y(), prng(6));
-		location()->changeContents(drop,'$');
-	}else if ( _type == 1 ) {				// Goblin
-		//Item _item = new Item (x(), y(), 6);
-		location()->changeContents(drop,'!');
-	}else if ( _type == 2 ) {				// Merchant
-		//Item _item = new Item (x(), y(), 6);
-		location()->changeContents(drop,'$');
-	}else if ( _type == 3 ) {					// Orc
-		//Item _item = new Item (x(), y(), 6);
-		location()->changeContents(drop,'$');
-	}	else {												// Dragon
-		Unoccupied *_unoccupied = new Unoccupied(_x, _y, true, true);
-		location()->changeContents(_unoccupied,'.');
+	if(!_dead) {
+	_dead = true;
+		cout << "The " << _name << " has died." << endl;
+		if ( _type == 0 ) {							// Grid Bug
+			//Item *_item = new Item (x(), y(), prng(6));
+			location()->changeContents(drop,'!');
+		}else if ( _type == 1 ) {				// Goblin
+			//Item _item = new Item (x(), y(), 6);
+			location()->changeContents(drop,'$');
+		}else if ( _type == 2 ) {				// Merchant
+			//Item _item = new Item (x(), y(), 6);
+			location()->changeContents(drop,'$');
+		}else if ( _type == 3 ) {					// Orc
+			//Item _item = new Item (x(), y(), 6);
+			location()->changeContents(drop,'$');
+		}else {												// Dragon
+			Unoccupied *_unoccupied = new Unoccupied(_x, _y, true, true);
+			location()->changeContents(_unoccupied,'.');
+		}
 	}
 	//~GameObject();
 
