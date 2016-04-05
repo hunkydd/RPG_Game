@@ -21,25 +21,15 @@ void setSeed( uint32_t seed ) {
 }
 
 Game::Game (std::ifstream &file, bool d, char p) : floor(0){
-	char c;
+	char c = ' ';
 
 	grid = new Cell **[MAX_FLOORS];
 	for (int i = 0; i < MAX_FLOORS; i++) {
 		grid[i]= new Cell *[MAX_ROWS];
 		for (int s = 0; s < MAX_ROWS; s++) {
-			grid[i][s] = new Cell[MAX_COLS];
+			grid[i][s] = new Cell[MAX_COLS]();
 		}
 	}
-	/*
-	for (int i = 0; i < MAX_FLOORS; i++) {
-		for (int y = 0; y < MAX_ROWS; y++) {
-			for (int x = 0; x < MAX_COLS; x++) {
-				Cell *cell = new Cell();
-				grid[i][y][x]=*cell;
-			} 
-		}
-	}
-	*/
 	player = new Player(-1,-1,p);
 	
 	playerLoc = new Unoccupied[MAX_FLOORS];
@@ -50,7 +40,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 		for (int i = 0; i < MAX_FLOORS; i++) {
 			//cout<<i<<endl;
 			for (int y = 0; y < MAX_ROWS; y++) {
-				for (int x = 0; x < MAX_COLS-1; x++) {
+				for (int x = 0; x < MAX_COLS; x++) {
 					file.get(c);
 					Cell *cell = new Cell (x,y,c);
 					grid [i][y][x] = *cell;
@@ -113,6 +103,9 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 					} else if (c == '.' || c == '+' || c == '#') {
 						Unoccupied *tile = new Unoccupied(x,y,true,true); //+ and # are not in the bounds of the genLocation so dont need to check if gameobjects can spawn
 						grid[i][y][x].changeContents(tile, c);
+					} else {
+						Unoccupied *tile = new Unoccupied(x,y,false,false);
+						grid[i][y][x].changeContents(tile, c);
 					} 
 				}
 			}
@@ -169,15 +162,25 @@ Game::~Game() {
 		delete [] grid [i];
 	}
 	delete [] grid;
-	//delete [] playerLoc;
+	//delete grid;
+	/*
+	for (int i = 0; i < MAX_FLOORS; i++) {
+		enemies[i].clear();
+	}
+`	*/
+	delete [] enemies;
+	//delete enemies;
+	delete [] playerLoc;
+	//delete playerLoc;
+	//delete player;
 	//delete player maybe
 }
 
 //int Game::floor() { return floor; }
 
 void Game::genLocation(int f, bool stairs) {
-	int room;
-	int x, y, section;
+	int room = 0;
+	int x=0, y=0, section=0;
 	for (;;) {
 		if (stairs) {
 			room = prng(3);
@@ -385,7 +388,7 @@ void Game::adjacent(int x, int y, int f, int centre) {
 
 //Checks to see if you can spawn on tile
 bool Game::canSpawn (int x, int y, int f) {
-	//cout<<y<<" "<<x<<endl;
+	//cout<<f<<" "<<y<<" "<<x<<endl;
 	//cout<<grid[f][y][x].display()<<endl;
 	return grid[f][y][x].getContents()->canSpawn();
 }
@@ -513,10 +516,10 @@ void Game::display() {
 		for (int x = 0; x < MAX_COLS; x++) {
 				cout<<grid[floor][y][x].display();
 		}
-		//cout<<endl;
+		//cout<<"a";
 	}
 	cout<<endl;
-	cout<<"           Class: " << setw(7) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor << endl;
+	cout<<"           Class: " << setw(7) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor + 1 << endl;
 	cout<<"           HP: " << setw(3) <<player->health() << "/" << player->maxHealth() <<"            Atk:" << setw(3) <<player->att() <<"          Def:" << setw(3) <<player->defence()<<'%' << "          Turn: " << turn << endl;
 
 }

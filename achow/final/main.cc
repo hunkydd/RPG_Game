@@ -65,7 +65,7 @@ int main (int argc, char *argv[]) {
 			cout << "Play Again? (y/n)" <<endl;
 			for (;;) {
 				cin >> s;
-		 		if (s != "y" || s != "n") {
+		 		if (s != "y" &&s != "n") {
 		 			cout << "Did not recognize input." <<endl;
 		 		} else {
 			 		if (s == "n") {

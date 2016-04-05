@@ -7,8 +7,9 @@
 class GameObject;
 
 class Cell {
-    int _x, _y;
-    char _display;
+    int _x=0;
+    int _y=0;
+    char _display=' ';
     GameObject *_contents = 0;
 
     public:
