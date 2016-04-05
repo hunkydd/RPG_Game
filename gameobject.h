@@ -20,7 +20,7 @@ class GameObject {
 	GameObject();
         virtual ~GameObject();
 
-	virtual void itemEffect(GameObject *character);
+	virtual void itemEffect(GameObject *character, bool player);
         virtual void addDragon(GameObject *en);
 	virtual int item();
 	virtual int getDefense();
@@ -30,7 +30,11 @@ class GameObject {
 	virtual bool dead();
 	virtual std::string getName();
 	virtual void hostile(bool b);
-
+	
+	virtual void setGold(int g);
+	virtual void setDefense(int d);
+	virtual void setAttack(int a);	
+	
 	int x() const;  // getters
         int y() const;
 

@@ -124,7 +124,7 @@ void Enemy::use(Cell **grid) {
 			_potionNearby = true;
 		}
 	}
-	if ( (_type == 'g') && _potionNearby ) grid[row][col].getContents()->itemEffect(this);
+	if ( (_type == 'g') && _potionNearby ) grid[row][col].getContents()->itemEffect(this, false);
 }
 // for Merchants, and Enemies while playing Samurai
 void Enemy::becomeHostile(Cell **grid) {

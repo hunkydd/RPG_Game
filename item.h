@@ -28,7 +28,7 @@ class Item : public GameObject {
     	int item();
 	void item(int i);
 
-    	void itemEffect(Character *character);  
+    	void itemEffect(GameObject *character, bool player);  
     	void tick(); // dunno
     	bool canWalk();
     	bool canSpawn();

@@ -490,9 +490,9 @@ bool Game::win() { return done; }
 bool Game::play() {return playAgain; }
 void Game::nextFloor() {
 	player->advance(false);
-	if (floor  == 5) {
+	if (floor  == 4) {
 		cout << "At long last, you have outmatched the Great Cavernous Chambers. Great things await you."<< endl;
-    	cout << "You achieved a score of"<<0<<"."<<endl;
+    	cout << "You achieved a score of "<<player->gold()<<"."<<endl;
     	done = true;
     	playAgain = true;
 	} else {

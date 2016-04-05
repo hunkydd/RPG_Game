@@ -33,7 +33,7 @@ void GameObject::location(Cell *location) {
 
 Cell *GameObject::location() { return _location; }
 
-void GameObject::itemEffect(GameObject *character){}
+void GameObject::itemEffect(GameObject *character, bool player){}
 void GameObject::addDragon(GameObject *en){}
 int GameObject::item(){return -1;}
 int GameObject::getDefense(){return -1;}
@@ -44,3 +44,6 @@ bool GameObject::dead(){return false;}
 std::string GameObject::getName(){return "";}
 void GameObject::hostile(bool b){}
 
+void GameObject::setGold(int g) {}
+void GameObject::setAttack(int a) {}
+void GameObject::setDefense(int d) {}

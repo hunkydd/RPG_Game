@@ -84,7 +84,7 @@ void Player::move( string dir, Cell **grid ) {
 	if (grid[row][col].display() == '>') {
 		advance(true);
 	}else if ( grid[row][col].display() == '$' ) {
-		grid[row][col].getContents()->itemEffect(this);
+		grid[row][col].getContents()->itemEffect(this, true);
 	}else if ( (grid[row][col].display() == ' ') ||
 			  		 (grid[row][col].display() == '-') ||
 			  		 (grid[row][col].display() == '|') ||
@@ -203,7 +203,7 @@ void Player::use( string dir, Cell **grid ) {
 		row++; col--;
 	} 
 	if ( (grid[row][col].display() == '$') || (grid[row][col].display() == '!') ) {
-		grid[row][col].getContents()->itemEffect(this);
+		grid[row][col].getContents()->itemEffect(this, true);
 	}else {
 		throw std::ios_base::failure( "There is nothing there to use!" );
 	}
