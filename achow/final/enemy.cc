@@ -53,81 +53,85 @@ char Enemy::getType() { return _type; }
 string Enemy::getName() { return _name; }
 bool Enemy::isHostile() { return _hostile; }
 bool Enemy::canWalk() { return _canWalk; }
-bool Enemy::dead() { return ( _health == 0 ); }
-int Enemy::detect( Cell ***grid ) {
+bool Enemy::dead() { return ( _health <= 0 ); }
+int Enemy::detect( Cell **grid ) {
 	int _nearby = 0; 				// 0 if nothing, 1 if potion, 2 if player
-	if ( location()->display() == 'g' ) {
-		for (int i = 0; i < 9; i++) {
-			if ( grid[_x+(i%3-1)][_y+(i/3-1)]->display() == '!' ) _nearby = 1;
+	int row = y(), col = x();
+	if ( grid[row][col].display() == 'g' ) {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (grid[row+i-1][col+j-1].display() == '!') _nearby = 1;
+			}
 		}
 	}
 	if ( _hostile ) {
-		for (int i = 0; i < 9; i++) {
-			if ( grid[_x+(i%3-1)][_y+(i/3-1)]->display() == '@' ) _nearby = 2;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (grid[row+i-1][col+j-1].display() == '@') _nearby = 2;
+			}
 		}
 	}
 	return _nearby;
 }
 
 // Moves enemies in random direction
-void Enemy::move( Cell ***grid ) {
-	int row = _x, col = _y;
+void Enemy::move( Cell **grid ) {
+	int row = y(), col = x();
 	int space = 0;
-	for (int i = 0; i < 9; i++) {
-		if ( grid[_x+(i%3-1)][_y+(i/3-1)]->display() == '.' ) space++;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			if ((i == 1) && (j == 1)) continue;
+			if (grid[row+i-1][col+j-1].display() == '.') space++;
+		}
 	}
-	while ( !grid[row][col]->display() != '.' ) {
-		if (space == 0) break;
-		int i = prng(2)-1;			// i = [-1,1]
-		row = _x+i;						// Enemy moves randomly vertically
-		col = _y+i;						// 					``					horizontally
+	if (space != 0) {
+		while ( grid[row][col].display() != '.' ) {
+			int i = prng(2)-1;			// i, j = [-1,1]
+			int j = prng(2)-1;
+			row = y()+i;						// Enemy moves randomly vertically
+			col = x()+j;						// 					``					horizontally
+		}
 	}
-	delete grid[row][col]->getContents();
-	grid[row][col]->changeContents(this, _display);
-	location(grid[_x][_y]);
-	Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
-	grid[_x][_y]->changeContents(_unoccupied, '.');
-	x(row);
-	y(col);
+	if (grid[y()][x()].display() == 'D') {}
+	else {
+		delete grid[row][col].getContents();
+		grid[row][col].changeContents(this, _display);
+		location(&grid[y()][x()]);
+		Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
+		int tmpY = y(), tmpX = x();
+		y(row);
+		x(col);
+		grid[tmpY][tmpX].changeContents(_unoccupied, '.');
+	}
 }
 // calculates the damage done by the enemy
 // and changes the player's HP
 void Enemy::attack(Character *player) {
-	/*
-	bool _playerNearby = false;
-	int x, y;
-	for (int i = 0; i < 9; i++) {
-		//if (grid[_x+(i%3-1)][_y+(i/3-1)].display() == '@') {
-			x = _x + (i % 3 - 1);
-			y = _y + (i / 3 - 1);
-			_playerNearby = true;
-		//}
-	}
-	*/
 	if ( _hostile ) {
 		int ceiling = ( player->getDefense() == 0 ? 0 : 1 );
-		int dmg = -(_attack * (100 - player->getDefense()) / 100 + ceiling);
+		int dmg = -((_attack * (100 - player->getDefense()) / 100) + ceiling);
 		player->setHealth(dmg);
+		cout << "The evil " << _name << " strikes you for " << -dmg << " damage!" << endl;
 	}
 }
-void Enemy::use(Cell ***grid) {
+void Enemy::use(Cell **grid) {
 	bool _potionNearby = false;
-	int row =_x, col=_y;
+	int row =y(), col=x();
 	for (int i = 0; i < 9; i++) {
-		if (grid[row][col]->display() == '!') {
-			row = _x + (i % 3 - 1);
-			col = _y + (i / 3 - 1);
+		if (grid[row][col].display() == '!') {
+			row = y() + (i % 3 - 1);
+			col = x() + (i / 3 - 1);
 			_potionNearby = true;
 		}
 	}
-	if ( (_type == 'g') && _potionNearby ) grid[row][col]->getContents()->itemEffect(this);
+	if ( (_type == 'g') && _potionNearby ) grid[row][col].getContents()->itemEffect(this);
 }
 // for Merchants, and Enemies while playing Samurai
-void Enemy::becomeHostile(Cell ***grid) {
+void Enemy::becomeHostile(Cell **grid) {
 	for (int i = 0; i <= MAX_ROWS; i++) {
 		for (int j = 0; j <= MAX_COLS; j++) {
-			if ( grid[i][j]->display() == _display ) {
-				grid[i][j]->getContents()->hostile(true);
+			if ( grid[i][j].display() == _display ) {
+				grid[i][j].getContents()->hostile(true);
 			}
 		}
 	}

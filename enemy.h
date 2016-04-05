@@ -2,6 +2,7 @@
 #define __ENEMY_H__
 #include <string>
 #include "character.h"
+#include "item.h"
 
 using std::string;
 
@@ -11,23 +12,25 @@ class Enemy : public Character {
 	string _name;
 	char _display;
 	bool _canWalk = false, _dead = false, _canMove;
-	
- public:
- 	bool _hostile;
-	Enemy( char c );
+	bool _hostile;
+	GameObject *drop;
 
+	const int MAX_ROWS = 25;
+    	const int MAX_COLS = 79;
+ public:
+	Enemy( int x, int y, char c );
+	void hostile(bool b);
 	char getType();
 	string getName();
-	int getHealth();
 	bool isHostile();
 	bool canWalk();
 	bool dead();
-	int detect( **Cell grid );
+	int detect( Cell **grid );
 
-	void move();
-	void attack( &Player p );
-	void use();
-	void becomeHostile();
+	void move(Cell **grid);
+	void attack (Character *player);
+	void use(Cell **grid);
+	void becomeHostile(Cell **grid);
 	void setAttack( int a );
 	void setDefense( int d );
 	void setHealth( int h );

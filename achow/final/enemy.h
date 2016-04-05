@@ -25,12 +25,12 @@ class Enemy : public Character {
 	bool isHostile();
 	bool canWalk();
 	bool dead();
-	int detect( Cell ***grid );
+	int detect( Cell **grid );
 
-	void move(Cell ***grid);
+	void move(Cell **grid);
 	void attack (Character *player);
-	void use(Cell ***grid);
-	void becomeHostile(Cell ***grid);
+	void use(Cell **grid);
+	void becomeHostile(Cell **grid);
 	void setAttack( int a );
 	void setDefense( int d );
 	void setHealth( int h );

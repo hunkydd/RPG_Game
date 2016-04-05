@@ -9,15 +9,15 @@ class Player : public Character {
 	int _job;			// 0 - Knight, 1 - Wizard, 2 - Samurai
 	int _gold;
 	bool _stair = false;
-
+	char _current = '.';
  public:
-	Player( char _class );
-	~Player();
+	Player(int x, int y, char _class );
+	//~Player();
 
 	string getType();
 	int gold();
-	*Cell location();
-
+	//Cell * location();
+	//void tick();
 	void reset();
 	void move( string dir, Cell **grid );
 	void attack( string dir, Cell **grid );
@@ -26,6 +26,9 @@ class Player : public Character {
 	void setAttack( int a );
 	void setDefense( int d );
 	void setGold( int g );
+
+	bool advance() const;
+	void advance(bool b);
 };
 
 #endif

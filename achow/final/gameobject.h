@@ -26,7 +26,7 @@ class GameObject {
 	virtual int getDefense();
 	virtual void setHealth(int h);
 	virtual bool isHostile();
-	virtual void becomeHostile(Cell ***grid);
+	virtual void becomeHostile(Cell **grid);
 	virtual bool dead();
 	virtual std::string getName();
 	virtual void hostile(bool b);

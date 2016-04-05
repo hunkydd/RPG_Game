@@ -1,4 +1,6 @@
 #include <string>
+#include <cstdlib>
+#include <iostream>
 #include "PRNG.h"
 #include "player.h"
 #include "cell.h"
@@ -11,7 +13,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
-Player::Player(int x, int y, char _class )
+Player::Player( int x, int y, char _class )
 	: Character(x,y), _gold(0) {
 	if ( _class == 'k') {
 		_job = 0;
@@ -58,9 +60,10 @@ void Player::reset() {
 
 //void Player::tick() {}
 
-void Player::move( string dir, Cell ***grid ) {		// should return a GameObject
+
+void Player::move( string dir, Cell **grid ) {
 	int row = y(), col = x();
-	string s=dir;
+	string s = dir;
 	if (s == "no") {
 		row--; 
 	} else if (s == "so") {
@@ -78,34 +81,41 @@ void Player::move( string dir, Cell ***grid ) {		// should return a GameObject
 	} else if (s == "sw") {
 		row++; col--;
 	} 
-
-	if (grid[row][col]->display() == '>') {
+	if (grid[row][col].display() == '>') {
 		advance(true);
-	}else if ( grid[row][col]->display() == '$' ) {
-		grid[row][col]->getContents()->itemEffect(this);
-	}else if ( (grid[row][col]->display() == ' ') ||
-			  		 (grid[row][col]->display() == '-') ||
-			  		 (grid[row][col]->display() == '|') ) {
-		throw ( "You can't move in that direction." );
+	}else if ( grid[row][col].display() == '$' ) {
+		grid[row][col].getContents()->itemEffect(this);
+	}else if ( (grid[row][col].display() == ' ') ||
+			  		 (grid[row][col].display() == '-') ||
+			  		 (grid[row][col].display() == '|') ||
+			  		 (grid[row][col].display() == '!') ||
+			  		 (grid[row][col].display() == 'g') ||
+			  		 (grid[row][col].display() == 'X') ||
+			  		 (grid[row][col].display() == 'M') ||
+			  		 (grid[row][col].display() == 'O') ||
+			  		 (grid[row][col].display() == 'D') ) {
+		throw std::ios_base::failure( "You can't move in that direction." );
 	}else {
-		//delete grid[row][col]->getContents();
-		grid[row][col]->changeContents(this, '@');
-		location(grid[row][col]);
+		char t = grid[row][col].display();
+		grid[row][col].changeContents(this, '@');
+		location(&grid[y()][x()]);
 		Unoccupied *_unoccupied = new Unoccupied(x(), y(), true, true);
-		grid[x()][y()]->changeContents(_unoccupied, '.');
-		x(col);
+		int tmpX = y(), tmpY = x();
 		y(row);
+		x(col);
+		grid[tmpX][tmpY].changeContents(_unoccupied, _current);
+		_current = t;
 	}
 }
-void Player::attack( string dir, Cell ***grid ) {
+void Player::attack( string dir, Cell **grid ) {
 	int row = y(), col = x();
-	string s=dir;
+	string s = dir;
 	string skill;
 	if (_job == 1) {			// wizard
 		int door = 0;		// if there are two or more doors(+) on the way, you cannot attack
 		while ( true ) {
 			if (s == "no") {
-				row--; 
+				row--;
 			} else if (s == "so") {
 				row++;
 			} else if (s == "ea") {
@@ -117,31 +127,31 @@ void Player::attack( string dir, Cell ***grid ) {
 			} else if (s == "nw") {
 				row--; col--;
 			} else if (s == "se") {
-				row++; col++; 
+				row++; col++;
 			} else if (s == "sw") {
 				row++; col--;
-			} 
-			char c = grid[row][col]->display();
+			}
+			char c = grid[row][col].display();
 			if ( c == '+' ) door++;
 			if ( (c == '|') || (c == '-') || (c == '>') || (c == ' ') || (door == 2) ) {
-				throw ( "There is nothing there to attack!" );
+				throw std::ios_base::failure( "There is nothing there to attack!" );
 			}else if ( (c == 'X') || (c == 'g') || (c == 'O') || (c == 'M') || (c == 'D') ) {
-				int ceiling = grid[row][col]->getContents()->getDefense() == 0 ? 0 : 1;
-				int dmg = -(_attack * (100 - grid[row][col]->getContents()->getDefense()) / 100 + ceiling);
-				grid[row][col]->getContents()->setHealth(dmg);
-				if ( !grid[row][col]->getContents()->isHostile() ) {
-					grid[row][col]->getContents()->becomeHostile( grid );
-					cout << "This is an act of war to every " << grid[row][col]->getContents()->getName() << "!" << endl;
+				int ceiling = grid[row][col].getContents()->getDefense() == 0 ? 0 : 1;
+				int dmg = -(_attack * (100 - grid[row][col].getContents()->getDefense()) / 100 + ceiling);
+				grid[row][col].getContents()->setHealth(dmg);
+				if ( !grid[row][col].getContents()->isHostile() ) {
+					grid[row][col].getContents()->becomeHostile( grid );
+					cout << "This is an act of war to every " << grid[row][col].getContents()->getName() << "!" << endl;
 				}
-				cout << "You attack the " << grid[row][col]->getContents()->getName();
-				cout << "with your Inifinite Loop Laser for " << -dmg << " damage!" << endl;
+				cout << "You attack the " << grid[row][col].getContents()->getName();
+				cout << " with your Inifinite Loop Laser for " << -dmg << " damage!" << endl;
 				break;
 			}else continue;
 		}
 	}else {							// knight & samurai
 		skill = (_job == 0 ? "Sword of Segfault" : "Memory Corruption Katana");
 		if (s == "no") {
-			row--; 
+			row--;
 		} else if (s == "so") {
 			row++;
 		} else if (s == "ea") {
@@ -153,30 +163,30 @@ void Player::attack( string dir, Cell ***grid ) {
 		} else if (s == "nw") {
 			row--; col--;
 		} else if (s == "se") {
-			row++; col++; 
+			row++; col++;
 		} else if (s == "sw") {
 			row++; col--;
 		} 
 	}
-	char c = grid[row][col]->display();
+	char c = grid[row][col].display();
 	if ( (c == '.') || (c == '|') || (c == '+') || (c == '#') || (c == '>') || (c == '-') ) {
-		throw( "There is nothing there to attack!" );
+		throw std::ios_base::failure( "There is nothing there to attack!" );
 	}
-	int ceiling = grid[row][col]->getContents()->getDefense() == 0 ? 0 : 1;
-	int dmg = -(_attack * (100 - grid[row][col]->getContents()->getDefense()) / 100 + ceiling);
-	grid[row][col]->getContents()->setHealth(dmg);
-	if ( !grid[row][col]->getContents()->isHostile() ) {
-		grid[row][col]->getContents()->becomeHostile( grid );
-		cout << "This is an act of war to every " << grid[row][col]->getContents()->getName() << "!" << endl;
+	int ceiling = grid[row][col].getContents()->getDefense() == 0 ? 0 : 1;
+	int dmg = -(_attack * (100 - grid[row][col].getContents()->getDefense()) / 100 + ceiling);
+	grid[row][col].getContents()->setHealth(dmg);
+	if ( !grid[row][col].getContents()->isHostile() ) {
+		grid[row][col].getContents()->becomeHostile( grid );
+		cout << "This is an act of war to every " << grid[row][col].getContents()->getName() << "!" << endl;
 	}
-	cout << "You attack the " << grid[row][col]->getContents()->getName();
+	cout << "You attack the " << grid[row][col].getContents()->getName();
 	cout << "with your " << skill << " for " << -dmg << " damage!" << endl;
 }
-void Player::use( string dir, Cell ***grid ) {
+void Player::use( string dir, Cell **grid ) {
 	int row = y(), col = x();
-	string s=dir;
+	string s = dir;
 	if (s == "no") {
-		row--; 
+		row--;
 	} else if (s == "so") {
 		row++;
 	} else if (s == "ea") {
@@ -188,14 +198,14 @@ void Player::use( string dir, Cell ***grid ) {
 	} else if (s == "nw") {
 		row--; col--;
 	} else if (s == "se") {
-		row++; col++; 
+		row++; col++;
 	} else if (s == "sw") {
 		row++; col--;
 	} 
-	if ( (grid[row][col]->display() == '$') || (grid[row][col]->display() == '!') ) {
-		grid[row][col]->getContents()->itemEffect(this);
+	if ( (grid[row][col].display() == '$') || (grid[row][col].display() == '!') ) {
+		grid[row][col].getContents()->itemEffect(this);
 	}else {
-		throw ( "There is nothing there to use!" );
+		throw std::ios_base::failure( "There is nothing there to use!" );
 	}
 }
 
