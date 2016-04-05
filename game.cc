@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include <sys/types.h>
 #include <unistd.h>
 #include <iomanip>
@@ -21,15 +22,24 @@ void setSeed( uint32_t seed ) {
 }
 
 Game::Game (std::ifstream &file, bool d, char p) : floor(0){
-	char c = ' ';
+	char c;
 
 	grid = new Cell **[MAX_FLOORS];
 	for (int i = 0; i < MAX_FLOORS; i++) {
 		grid[i]= new Cell *[MAX_ROWS];
 		for (int s = 0; s < MAX_ROWS; s++) {
-			grid[i][s] = new Cell[MAX_COLS]();
+			grid[i][s] = new Cell[MAX_COLS];
 		}
 	}
+	/*
+	for (int i = 0; i < MAX_FLOORS; i++) {
+		for (int y = 0; y < MAX_ROWS; y++) {
+			for (int x = 0; x < MAX_COLS; x++) {
+				grid[i][y][x]=new Cell();
+			} 
+		}
+	}
+	*/
 	player = new Player(-1,-1,p);
 	
 	playerLoc = new Unoccupied[MAX_FLOORS];
@@ -40,7 +50,7 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 		for (int i = 0; i < MAX_FLOORS; i++) {
 			//cout<<i<<endl;
 			for (int y = 0; y < MAX_ROWS; y++) {
-				for (int x = 0; x < MAX_COLS; x++) {
+				for (int x = 0; x < MAX_COLS-1; x++) {
 					file.get(c);
 					Cell *cell = new Cell (x,y,c);
 					grid [i][y][x] = *cell;
@@ -103,9 +113,6 @@ Game::Game (std::ifstream &file, bool d, char p) : floor(0){
 					} else if (c == '.' || c == '+' || c == '#') {
 						Unoccupied *tile = new Unoccupied(x,y,true,true); //+ and # are not in the bounds of the genLocation so dont need to check if gameobjects can spawn
 						grid[i][y][x].changeContents(tile, c);
-					} else {
-						Unoccupied *tile = new Unoccupied(x,y,false,false);
-						grid[i][y][x].changeContents(tile, c);
 					} 
 				}
 			}
@@ -162,17 +169,7 @@ Game::~Game() {
 		delete [] grid [i];
 	}
 	delete [] grid;
-	//delete grid;
-	/*
-	for (int i = 0; i < MAX_FLOORS; i++) {
-		enemies[i].clear();
-	}
-`	*/
-	delete [] enemies;
-	//delete enemies;
-	delete [] playerLoc;
-	//delete playerLoc;
-	//delete player;
+	//delete [] playerLoc;
 	//delete player maybe
 }
 
@@ -180,22 +177,24 @@ Game::~Game() {
 
 void Game::genLocation(int f, bool stairs) {
 	int room = 0;
-	int x=0, y=0, section=0;
+	int x = 0, y = 0, section = 0;
 	for (;;) {
 		if (stairs) {
 			room = prng(3);
 			if (room >= playerRoom) { room += 1; }
 		} else {
-			room = prng(4);
+			room = prng(1, 617);
 		}
 
-		if (room == 0) {
-			y = prng(3) + 3;
+		if ((room >= 1) && (room <= 106)) {
+			room = 0;
+			y = prng(3, 6);
 			x = prng(25) + 3;
 			if (canSpawn(x,y,f)) {
 				break;
 			}
-		} else if (room == 1) {
+		} else if ((room >= 106) && (room <= 284)) {
+			room = 1;
 			section = prng(3);
 			if (section == 0) {
 				y = prng(3) + 3;
@@ -222,19 +221,22 @@ void Game::genLocation(int f, bool stairs) {
 					break;
 				}
 			}
-		} else if (room == 2) {
+		} else if ((room >= 284) && (room <= 320)) {
+			room = 2;
 			y = prng(2) + 10;
 			x = prng(9) + 38;
 			if (canSpawn(x,y,f)) {
 				break;
 			}
-		} else if (room == 3) {
+		} else if ((room >= 320) && (room <= 467)) {
+			room = 3;
 			y = prng(6) + 15;
 			x = prng(20) + 4;
 			if (canSpawn(x,y,f)) {
 				break;
 			}
 		} else {
+			room = 4;
 			section = prng(1);
 			if (section == 0) {
 				y = prng(2) + 16;
@@ -287,11 +289,10 @@ void Game::spawnPotion(int f) {
 
 
 void Game::spawnGold(int f) {
-	int x, y;
+	int x = 0, y = 0;
 	Item *gold;
 	int rn = prng(7);
-	
-	if (rn < 6) {
+	if (rn < 7) {
 		gold = new Item(6);
 		genLocation(f, false);
 		x=loc.x;
@@ -320,8 +321,8 @@ void Game::spawnGold(int f) {
 
 	gold->x(x);
 	gold->y(y);
-	grid[f][loc.y][loc.x].changeContents(gold,'$');
-	gold->location(&grid[f][loc.y][loc.x]);
+	grid[f][y][x].changeContents(gold,'$');
+	gold->location(&grid[f][y][x]);
 }
 
 
@@ -331,15 +332,15 @@ void Game::spawnEnemy(int f) {
 	if ( rn == 0 || rn == 1 ) {
 		c = 'X';
 	} else if ( rn == 2 || rn == 3 )  {
-		c ='g';
+		c = 'g';
 	} else if ( rn == 4) {
 		c = 'O';
 	} else {
 		c = 'M';
 	}
-	Enemy *e = new Enemy(loc.x,loc.y,c);
 
 	genLocation(f, false);
+	Enemy *e = new Enemy(loc.x,loc.y,c);
 
 	e->x(loc.x);
 	e->y(loc.y);
@@ -388,8 +389,8 @@ void Game::adjacent(int x, int y, int f, int centre) {
 
 //Checks to see if you can spawn on tile
 bool Game::canSpawn (int x, int y, int f) {
-	//cout<<f<<" "<<y<<" "<<x<<endl;
-	//cout<<grid[f][y][x].display()<<endl;
+	//cout<<y<<" "<<x<<endl;
+	//cout<<grid[f][y][x]->display()<<endl;
 	return grid[f][y][x].getContents()->canSpawn();
 }
 
@@ -403,27 +404,27 @@ void Game::action (std::istream &cmd) {
 	cmd >> s;
 	try {
 		if (s == "no") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "so") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "ea") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "we") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "ne") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "nw") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "se") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "sw") {
-			player->move(s, &grid[floor]);
+			player->move(s, grid[floor]);
 		} else if (s == "a") {
 			cmd >> s;
-			player->attack(s, &grid[floor]);
+			player->attack(s, grid[floor]);
 		} else if (s == "u") {
 			cmd >> s;
-			player->use(s, &grid[floor]);
+			player->use(s, grid[floor]);
 		} else if (s == "q") {
 	 		cout << "Are you sure you want to quit? (y/n)" <<endl;
 	 		cmd >> s;
@@ -446,20 +447,21 @@ void Game::action (std::istream &cmd) {
 			cout << "Did not recognize input." <<endl;
 			action(cmd);
 		}
-	} catch ( const string &ex) {
-		cout << ex << endl;
+	} catch ( std::ios_base::failure err ) {
+		cout << err.what() << endl;
 		action(cmd);
 	}
 	if (!stopWander) {
 		list<Enemy *>::iterator x;
 		for( x = enemies[floor].begin(); x != enemies[floor].end(); x++) {
-			int eMove=(*x)->detect(&grid[floor]);
+			if ((*x)->dead()) (*x)->die();
+			int eMove=(*x)->detect(grid[floor]);
 			if(eMove == 2) {
 				(*x)->attack(player);
 			} else if (eMove == 1) {
-				(*x)->use(&grid[floor]);
+				(*x)->use(grid[floor]);
 			} else {
-				(*x)->move(&grid[floor]);
+				(*x)->move(grid[floor]);
 			}
 		}
 	}
@@ -470,6 +472,7 @@ void Game::action (std::istream &cmd) {
 		turn++;
 	}
 	L: ;
+	player->setHealth(5);
 }
 /*
 void Game::findPlayer(int f, Enemy *en) {
@@ -487,7 +490,7 @@ bool Game::win() { return done; }
 bool Game::play() {return playAgain; }
 void Game::nextFloor() {
 	player->advance(false);
-	if (floor  == 6) {
+	if (floor  == 5) {
 		cout << "At long last, you have outmatched the Great Cavernous Chambers. Great things await you."<< endl;
     	cout << "You achieved a score of"<<0<<"."<<endl;
     	done = true;
@@ -495,7 +498,7 @@ void Game::nextFloor() {
 	} else {
 		floor++;
 		setPlayer(floor);
-		cout << "You decended down to floor " << floor <<"." << endl;
+		cout << "You decended down to floor " << floor+1 <<"." << endl;
 	}
 }
 
@@ -505,7 +508,7 @@ void Game::gameOver() {
 	done = true;
 	playAgain = true;
 	cout << "You have been bested by the Great Cavernous Chambers. Good luck next time!"<< endl;
-    	cout << "You achieved a score of"<<0<<"."<<endl;
+    	cout << "You achieved a score of "<<0<<"."<<endl;
 
 }
 string Game::type() {
@@ -516,10 +519,10 @@ void Game::display() {
 		for (int x = 0; x < MAX_COLS; x++) {
 				cout<<grid[floor][y][x].display();
 		}
-		//cout<<"a";
+		//cout<<endl;
 	}
 	cout<<endl;
-	cout<<"           Class: " << setw(7) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor + 1 << endl;
+	cout<<"           Class: " << setw(8) << type() << "       GP: " << setw(3) <<player->gold()<< "          Floor " << floor << endl;
 	cout<<"           HP: " << setw(3) <<player->health() << "/" << player->maxHealth() <<"            Atk:" << setw(3) <<player->att() <<"          Def:" << setw(3) <<player->defence()<<'%' << "          Turn: " << turn << endl;
 
 }

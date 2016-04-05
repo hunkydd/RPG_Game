@@ -48,7 +48,6 @@ class DragonGold : public Item {
     public:
 	DragonGold(int x, int y, int item);
         DragonGold(int item);
-	~DragonGold();
         void addDragon(GameObject *dr);
 	bool canPickup();
 };

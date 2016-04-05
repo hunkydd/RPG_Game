@@ -6,20 +6,24 @@ class Character : public GameObject {
  protected:
   int _health, _maxHealth, _attack, _defense;
  public:
-  Character();
+  Character(int x, int y);
 
-  int _health() const;
-  int _maxHealth() const;
-  int _attack() const;
-  int _defence() const;
+  int health() const;
+  int maxHealth() const;
+  int att() const;
+  int defence() const;
+  
+  bool canWalk();
+  bool canSpawn();
 
-  virtual void tick();    // override from GameObject
+  void tick();    // override from GameObject
   virtual void move();
   virtual void attack();
   virtual void use();
   virtual void setHealth( int h );
   virtual void setAttack( int a );
   virtual void setDefense( int d );
+  virtual void setGold( int g);
 };
 
 #endif

@@ -2,7 +2,7 @@ CXX = g++-4.9									# compiler
 CXXFLAGS = -g -Wall -Werror -std=c++11 -MMD				# compiler flags
 MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}			# makefile name
 
-OBJECTS1 = game.o cell.o gameobject.o character.o player.o enemy.o unoccupied.o item.o			# object files forming executable
+OBJECTS1 = game.o cell.o gameobject.o character.o player.o enemy.o unoccupied.o item.o main.o		# object files forming executable
 EXEC1 = cc3k									# executable name
 
 OBJECTS = ${OBJECTS1}

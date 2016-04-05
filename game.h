@@ -29,7 +29,7 @@ class Game {
     //const int NUM_ENEMIES = 5;
 
     Cell ***grid;
-    Player *player=0;
+    Player *player;
     Unoccupied *playerLoc;
     std::list<Enemy *> *enemies;
 

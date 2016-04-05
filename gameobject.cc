@@ -11,9 +11,7 @@ GameObject::GameObject(int x,int y) : _x(x), _y(y) {
 
 GameObject::GameObject(){ _location = 0;}
 
-GameObject::~GameObject() {
-	//delete _location;
-}
+GameObject::~GameObject() {}
 
 int GameObject::x() const {
 	return _x;
@@ -41,7 +39,7 @@ int GameObject::item(){return -1;}
 int GameObject::getDefense(){return -1;}
 void GameObject::setHealth(int h){}
 bool GameObject::isHostile(){return false;}
-void GameObject::becomeHostile(Cell ***grid){}
+void GameObject::becomeHostile(Cell **grid){}
 bool GameObject::dead(){return false;}
 std::string GameObject::getName(){return "";}
 void GameObject::hostile(bool b){}

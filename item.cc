@@ -66,8 +66,6 @@ DragonGold::DragonGold(int x, int y, int item) : Item(x,y,item){}
 
 DragonGold::DragonGold(int item): Item(item) {}
 
-DragonGold::~DragonGold() { delete dragon; }
-
 void DragonGold::addDragon(GameObject *dr) { dragon = dr; }
 
 bool DragonGold::canPickup() {
