@@ -401,6 +401,7 @@ bool Game::canWalk (int x, int y) {
 
 void Game::action (std::istream &cmd) {
 	string s;
+	L2:;
 	cmd >> s;
 	try {
 		if (s == "no") {
@@ -449,7 +450,7 @@ void Game::action (std::istream &cmd) {
 		}
 	} catch ( std::ios_base::failure err ) {
 		cout << err.what() << endl;
-		action(cmd);
+		goto L2;
 	}
 	if (!stopWander) {
 		list<Enemy *>::iterator x;
